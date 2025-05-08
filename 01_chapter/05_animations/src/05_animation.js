@@ -1,5 +1,9 @@
 import * as THREE from 'three'
 
+// gsap : Tween animation library
+// npm install gsap で取得
+import gsap from "gsap";
+
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
 
@@ -35,9 +39,14 @@ scene.add(camera)
 const renderer = new THREE.WebGLRenderer({
     canvas: canvas
 })
-renderer.setSize(sizes.width, sizes.height)
-const clock = new THREE.Clock();
 
+// GRASP
+gsap.to(mesh.position, { duration: 1, delay: 1, x: 2 });
+
+renderer.setSize(sizes.width, sizes.height)
+
+// Clock
+const clock = new THREE.Clock();
 // Animations
 const tick = () =>
 {
@@ -47,14 +56,15 @@ const tick = () =>
     // mesh.rotation.y = elapsedTime * Math.PI * 2;
 
     // 円運動
-    mesh.position.y = Math.sin(elapsedTime);
-    mesh.position.x = Math.cos(elapsedTime);
+    // mesh.position.y = Math.sin(elapsedTime);
+    // mesh.position.x = Math.cos(elapsedTime);
 
-    camera.lookAt(mesh.position);
+    // camera.lookAt(mesh.position);
 
+    //TODO: アニメーションさせる時、rendererの更新を忘れないこと。
     renderer.render(scene, camera);
 
     window.requestAnimationFrame(tick);
 }
-
 tick();
+
