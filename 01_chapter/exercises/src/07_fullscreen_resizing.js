@@ -26,10 +26,37 @@ const sizes = {
     height: window.innerHeight
 }
 
-// スクリーンサイズが変更された時のイベント処理でリサイズする！
+// スクリーンサイズが変更された時のイベント処理でリサイズする！各要素を更新して画面上に反映させる!
 window.addEventListener("resize", () => {
     console.log("window has been resized!")
+    // update sizes
+    sizes.width = window.innerWidth
+    sizes.height = window.innerHeight
+    // update camera
+    camera.aspect = sizes.width / sizes.height
+    //NOTE: これを実行しなければ、オブジェクトのサイズがリサイズされずに伸縮してしまう。カメラの種類やアスペクト比を変更した時
+    camera.updateProjectionMatrix()
+    // update renderer
+    renderer.setSize(sizes.width, sizes.height)
+    //NOTE: 設定しない場合（デフォルト=1)、高解像度ディスプレイでは、エッジがジャギーで表示される可能性がある。随時調整する。
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 })
+
+// フルスクリーン (ここでは、ダブルクリックした時)
+window.addEventListener("dblclick", () =>
+{
+    if (!document.fullscreenElement)
+    {
+        canvas.requestFullscreen()
+        console.log("go fullscreen")
+    }
+    else
+    {
+        console.log("leave fullscreen")
+        document.exitFullscreen()
+    }
+}
+)
 
 /**
  * Camera
@@ -41,7 +68,7 @@ scene.add(camera)
 
 // Controls
 const controls = new OrbitControls(camera, canvas)
-controls.enabled = false
+controls.enabled = true
 controls.enableDamping = true
 
 /**
@@ -51,6 +78,8 @@ const renderer = new THREE.WebGLRenderer({
     canvas: canvas
 })
 renderer.setSize(sizes.width, sizes.height)
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+
 
 /**
  * Animate
