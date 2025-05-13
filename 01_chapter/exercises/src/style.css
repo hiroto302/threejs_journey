@@ -1,0 +1,24 @@
+/*
+07_fullscreen_resizing.css
+下記のスタイルを .html の各要素に適用させるといい感じ！
+*/
+
+*
+{
+  margin: 0;
+  padding: 0;
+}
+
+body
+{
+  background: red;
+  overflow: hidden;
+}
+
+.webgl
+{
+  position: fixed;
+  top: 0;
+  left: 0;
+  outline: none;
+}
