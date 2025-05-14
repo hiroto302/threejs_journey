@@ -21,7 +21,9 @@ for (let i = 0; i < count * 3 * 3; i++)
 {
     positionArray[i] = (Math.random() - 0.5) * 4
 }
-// BufferAttribute : 一つの頂点に対して3つの値(x,y,z)の座標を適用させるために、
+// BufferAttribute : 一つの頂点に対して3つの値(x,y,z)の座標を適用させる
+// この時多次元配列は作られません。内部的には1次元配列のままで、「3つごとに区切って読み取る」という情報を持ったオブジェクトが作られます。
+// これがメモリ効率と処理速度の観点から優れているからです。
 const positionAttribute = new THREE.BufferAttribute(positionArray, 3)
 geometry.setAttribute("position", positionAttribute)
 
