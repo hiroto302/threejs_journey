@@ -1,7 +1,9 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import GUI from 'lil-gui'
+// RGBELoader: 環境マップを読み込むためのローダー。HDR（High Dynamic Range）画像を読み込むのに使用。
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
+
 
 /**
  * Debug
@@ -49,6 +51,11 @@ matcapTexture.colorSpace = THREE.SRGBColorSpace
 
 /**
  * Environment map
+EquirectangularReflectionMapping: これは360度の全周パノラマ画像（赤道方向に引き伸ばされた地図のような形式）を3D空間の球体にマッピングする方法です。
+scene.background: これはシーン全体の背景として環境マップを設定しています。カメラがどの方向を向いても、遠くにある背景として環境マップが表示されます。
+scene.environment: これが最も重要な部分で、オブジェクトの反射や照明計算に環境マップを使用するよう指示しています。
+
+Unity における SkyBox と ReflectionProbeのイメージ
  */
 const rgbeLoader = new RGBELoader()
 rgbeLoader.load('./textures/environmentMap/2k.hdr', (environmentMap) =>
