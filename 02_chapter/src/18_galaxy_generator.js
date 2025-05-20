@@ -22,6 +22,9 @@ const scene = new THREE.Scene()
 const parameters = {}
 parameters.count = 50000    // パーティクル数
 parameters.size = 0.01
+parameters.radius = 5
+parameters.branches = 3
+parameters.spin = 1
 
 let geometry = null
 let material = null
@@ -38,7 +41,12 @@ const generateGalaxy = () =>
         scene.remove(points)
     }
 
-    // Geometry
+    /*NOTE:  Shape spiral Geometry ステップを踏んで作成していく
+    step1: Straight Line of center
+    step2: Branches
+    */
+
+
     geometry = new THREE.BufferGeometry()
     const positions = new Float32Array(parameters.count * 3)    // パーティクルの各頂点座標
 
@@ -46,9 +54,33 @@ const generateGalaxy = () =>
     {
         // 各頂点の(x,y,z)座標位置の決定
         const i3 = i * 3
-        positions[i3 + 0] =(Math.random() - 0.5) * 3
-        positions[i3 + 1] =(Math.random() - 0.5) * 3
-        positions[i3 + 2] =(Math.random() - 0.5) * 3
+        // Step 0 : Cube Shape
+        // positions[i3 + 0] =(Math.random() - 0.5) * 3
+        // positions[i3 + 1] =(Math.random() - 0.5) * 3
+        // positions[i3 + 2] =(Math.random() - 0.5) * 3
+
+        // step 1 : Straight Line Shape
+        // const radius =  Math.random() * parameters.radius
+        // positions[i3 + 0] = radius
+        // positions[i3 + 1] = 0
+        // positions[i3 + 2] = 0
+
+        // step 2: Straight Branches Shape
+        // const radius =  Math.random() * parameters.radius
+        // const branchAngle = (i % parameters.branches) / parameters.branches * Math.PI * 2
+        // if (i < 20) { console.log(i, branchAngle)}
+        // positions[i3 + 0] = Math.cos(branchAngle) * radius
+        // positions[i3 + 1] = 0
+        // positions[i3 + 2] = Math.sin(branchAngle) * radius
+
+        // step 3: Spin Branches Shape
+        const radius =  Math.random() * parameters.radius
+        const spinAngle = radius * parameters.spin
+        const branchAngle = (i % parameters.branches) / parameters.branches * Math.PI * 2
+        if (i < 20) { console.log(i, branchAngle)}
+        positions[i3 + 0] = Math.cos(branchAngle + spinAngle) * radius
+        positions[i3 + 1] = 0
+        positions[i3 + 2] = Math.sin(branchAngle + spinAngle) * radius
     }
 
     geometry.setAttribute(
@@ -75,6 +107,10 @@ generateGalaxy()
 //NOTE: onChange, onFinishChange などメソッドチェンインに追加して、変更の値を反映させること
 gui.add(parameters, "count").min(100).max(100000).step(100).onChange(generateGalaxy)
 gui.add(parameters, "size").min(0.001).max(0.1).step(0.001).onChange(generateGalaxy)
+gui.add(parameters, "radius").min(1).max(50).step(1).onChange(generateGalaxy)
+gui.add(parameters, "branches").min(2).max(10).step(1).onChange(generateGalaxy)
+gui.add(parameters, "spin").min(-5).max(5).step(0.001).onChange(generateGalaxy)
+
 // 値を変更すると、前回生成したのもが残ってしまうので、Galaxyの Geometry・material・pointsをシーンからデストロイする
 
 
