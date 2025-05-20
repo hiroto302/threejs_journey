@@ -6,7 +6,7 @@ import GUI from 'lil-gui'
  * Base
  */
 // Debug
-const gui = new GUI()
+const gui = new GUI({width:360})
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
@@ -15,18 +15,31 @@ const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
 
 
+
 /* NOTE: Galaxy
 */
-//MEMO: こいつに DebugUI で表示したいGalaxyに関するパラメータを代入
+//NOTE: Galaxyに関するパラメータを代入。パラメーターと保持することで DebugUI で表示管理しやすくもなる。
 const parameters = {}
-parameters.count = 1000    // パーティクル数
-parameters.size = 0.02
+parameters.count = 50000    // パーティクル数
+parameters.size = 0.01
+
+let geometry = null
+let material = null
+let points = null
 
 // 生成ロジック
 const generateGalaxy = () =>
 {
+    // Destroy already exits Galaxy
+    if (points !== null)
+    {
+        geometry.dispose()
+        material.dispose()
+        scene.remove(points)
+    }
+
     // Geometry
-    const geometry = new THREE.BufferGeometry()
+    geometry = new THREE.BufferGeometry()
     const positions = new Float32Array(parameters.count * 3)    // パーティクルの各頂点座標
 
     for (let i = 0; i < parameters.count; i++)
@@ -43,7 +56,7 @@ const generateGalaxy = () =>
     )
 
     // Material
-    const material = new THREE.PointsMaterial({
+    material = new THREE.PointsMaterial({
         size: parameters.size,
         sizeAttenuation: true,
         depthWrite: false,
@@ -51,14 +64,18 @@ const generateGalaxy = () =>
     })
 
     // Points
-    const points = new THREE.Points(geometry, material)
+    points = new THREE.Points(geometry, material)
     scene.add(points)
 
 }
 
 generateGalaxy()
 
-
+// Debug UI
+//NOTE: onChange, onFinishChange などメソッドチェンインに追加して、変更の値を反映させること
+gui.add(parameters, "count").min(100).max(100000).step(100).onChange(generateGalaxy)
+gui.add(parameters, "size").min(0.001).max(0.1).step(0.001).onChange(generateGalaxy)
+// 値を変更すると、前回生成したのもが残ってしまうので、Galaxyの Geometry・material・pointsをシーンからデストロイする
 
 
 /**
