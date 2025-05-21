@@ -25,6 +25,8 @@ parameters.size = 0.01
 parameters.radius = 5
 parameters.branches = 3
 parameters.spin = 1
+parameters.randomness = 0.2
+parameters.randomnessPower = 3
 
 let geometry = null
 let material = null
@@ -41,9 +43,11 @@ const generateGalaxy = () =>
         scene.remove(points)
     }
 
-    /*NOTE:  Shape spiral Geometry ステップを踏んで作成していく
-    step1: Straight Line of center
-    step2: Branches
+    /*NOTE:  Shape spiral Geometry ステップを踏んで作成しながら理解を深めていく
+    step 1: Straight Line of center
+    step 2: Straight Branches Shape
+    step 3: Spin Branches Shape
+    step 4: Spin Branches Shape
     */
 
 
@@ -74,13 +78,32 @@ const generateGalaxy = () =>
         // positions[i3 + 2] = Math.sin(branchAngle) * radius
 
         // step 3: Spin Branches Shape
+        // const radius =  Math.random() * parameters.radius
+        // // 中心点から遠い程、頂点ほどスピンさせてGalaxyを表現する
+        // const spinAngle = radius * parameters.spin
+        // // 枝分かれするブランチをを原点から何度回転した方向に伸ばしていくか決定
+        // const branchAngle = (i % parameters.branches) / parameters.branches * Math.PI * 2
+        // positions[i3 + 0] = Math.cos(branchAngle + spinAngle) * radius
+        // positions[i3 + 1] = 0
+        // positions[i3 + 2] = Math.sin(branchAngle + spinAngle) * radius
+
+        // step 4: Randomness Spin Branches Shape
         const radius =  Math.random() * parameters.radius
         const spinAngle = radius * parameters.spin
         const branchAngle = (i % parameters.branches) / parameters.branches * Math.PI * 2
-        if (i < 20) { console.log(i, branchAngle)}
-        positions[i3 + 0] = Math.cos(branchAngle + spinAngle) * radius
-        positions[i3 + 1] = 0
-        positions[i3 + 2] = Math.sin(branchAngle + spinAngle) * radius
+
+        // このままだと、branchの中心点から四角形になるように伸ばされていくだけ。randomの値が1次曲線な値を返している
+        // const randomX = (Math.random() - 0.5) * parameters.randomness
+        // const randomY = (Math.random() - 0.5) * parameters.randomness
+        // const randomZ = (Math.random() - 0.5) * parameters.randomness
+        // 中心点から遠ざかるほどparticleの密度がfadeしていくようにする。randomの値が2時曲線的な値を返すようにする
+        const randomX = Math.pow(Math.random(), parameters.randomnessPower) * (Math.random() < 0.5 ? 1 : -1)
+        const randomY = Math.pow(Math.random(), parameters.randomnessPower) * (Math.random() < 0.5 ? 1 : -1)
+        const randomZ = Math.pow(Math.random(), parameters.randomnessPower) * (Math.random() < 0.5 ? 1 : -1)
+
+        positions[i3 + 0] = Math.cos(branchAngle + spinAngle) * radius + randomX
+        positions[i3 + 1] = randomY
+        positions[i3 + 2] = Math.sin(branchAngle + spinAngle) * radius + randomZ
     }
 
     geometry.setAttribute(
@@ -105,13 +128,15 @@ generateGalaxy()
 
 // Debug UI
 //NOTE: onChange, onFinishChange などメソッドチェンインに追加して、変更の値を反映させること
+// 値を変更すると、前回生成したのもが残ってしまうので、Galaxyの Geometry・material・pointsをシーンからデストロイすることを忘れないこと!
 gui.add(parameters, "count").min(100).max(100000).step(100).onChange(generateGalaxy)
 gui.add(parameters, "size").min(0.001).max(0.1).step(0.001).onChange(generateGalaxy)
 gui.add(parameters, "radius").min(1).max(50).step(1).onChange(generateGalaxy)
 gui.add(parameters, "branches").min(2).max(10).step(1).onChange(generateGalaxy)
 gui.add(parameters, "spin").min(-5).max(5).step(0.001).onChange(generateGalaxy)
+gui.add(parameters, "randomness").min(0).max(2).step(0.001).onChange(generateGalaxy)
+gui.add(parameters, "randomnessPower").min(0).max(10).step(0.001).onChange(generateGalaxy)
 
-// 値を変更すると、前回生成したのもが残ってしまうので、Galaxyの Geometry・material・pointsをシーンからデストロイする
 
 
 /**
