@@ -15,7 +15,6 @@ const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
 
 
-
 /* NOTE: Galaxy
 */
 //NOTE: Galaxyに関するパラメータを代入。パラメーターと保持することで DebugUI で表示管理しやすくもなる。
@@ -27,6 +26,8 @@ parameters.branches = 3
 parameters.spin = 1
 parameters.randomness = 0.2
 parameters.randomnessPower = 3
+parameters.insideColor = "#ff6030"
+parameters.outsideColor = "#0040ff"
 
 let geometry = null
 let material = null
@@ -48,11 +49,16 @@ const generateGalaxy = () =>
     step 2: Straight Branches Shape
     step 3: Spin Branches Shape
     step 4: Spin Branches Shape
+    step 5: colors
     */
 
 
     geometry = new THREE.BufferGeometry()
     const positions = new Float32Array(parameters.count * 3)    // パーティクルの各頂点座標
+    const colors = new Float32Array(parameters.count * 3)       // パーティクルの色
+
+    const colorInside = new THREE.Color(parameters.insideColor)
+    const colorOutside = new THREE.Color(parameters.outsideColor)
 
     for (let i = 0; i < parameters.count; i++)
     {
@@ -104,10 +110,28 @@ const generateGalaxy = () =>
         positions[i3 + 0] = Math.cos(branchAngle + spinAngle) * radius + randomX
         positions[i3 + 1] = randomY
         positions[i3 + 2] = Math.sin(branchAngle + spinAngle) * radius + randomZ
+
+        // Step5: Colors
+        // 内側の色のコーピーを作成。(元の色オブジェクトを変更しないようにするため)
+        const mixedColor = colorInside.clone()
+        /*NOTE: lerp(Linear Interpolation)線形補間について
+        第一引数: 混合する対象の色
+        第二引数: 混合比率 (0 ~ 1)の値 を 現在の距離 / 最大距離 で算出
+        */
+        mixedColor.lerp(colorOutside, radius / parameters.radius)
+
+        colors[i3 + 0] = mixedColor.r   // 赤成分
+        colors[i3 + 1] = mixedColor.g   // 緑
+        colors[i3 + 2] = mixedColor.b   // 青
     }
 
     geometry.setAttribute(
         "position", new THREE.BufferAttribute(positions, 3)
+    )
+
+    // 計算されたGRB値をジオメトリに反映
+    geometry.setAttribute(
+        "color", new THREE.BufferAttribute(colors, 3)
     )
 
     // Material
@@ -115,7 +139,8 @@ const generateGalaxy = () =>
         size: parameters.size,
         sizeAttenuation: true,
         depthWrite: false,
-        blending: THREE.AdditiveBlending
+        blending: THREE.AdditiveBlending,
+        vertexColors: true
     })
 
     // Points
@@ -136,6 +161,8 @@ gui.add(parameters, "branches").min(2).max(10).step(1).onChange(generateGalaxy)
 gui.add(parameters, "spin").min(-5).max(5).step(0.001).onChange(generateGalaxy)
 gui.add(parameters, "randomness").min(0).max(2).step(0.001).onChange(generateGalaxy)
 gui.add(parameters, "randomnessPower").min(0).max(10).step(0.001).onChange(generateGalaxy)
+gui.addColor(parameters, "insideColor").onChange(generateGalaxy)
+gui.addColor(parameters, "outsideColor").onChange(generateGalaxy)
 
 
 
