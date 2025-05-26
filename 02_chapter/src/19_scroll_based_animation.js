@@ -10,6 +10,7 @@ const parameters = {
     materialColor: '#ffeded'
 }
 
+
 gui
     .addColor(parameters, 'materialColor')
 
