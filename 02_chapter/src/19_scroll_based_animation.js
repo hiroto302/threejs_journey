@@ -165,24 +165,29 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 /**
  * Scroll
  */
+// window.scrollY : 現在のドキュメントが垂直方向にスクロールされているピクセル数を返す
 let scrollY = window.scrollY
+// 現在一番近いセクション
 let currentSection = 0
 
 window.addEventListener('scroll', () =>
 {
+    // 最新の位置の更新
     scrollY = window.scrollY
     const newSection = Math.round(scrollY / sizes.height)
 
     if(newSection != currentSection)
     {
         currentSection = newSection
-
+        //NOTE: 指定されたtargetのプロパティを、varsオブジェクトで定義された値までアニメーションさせる
         gsap.to(
+            // target
             sectionMeshes[currentSection].rotation,
             {
-                duration: 1.5,
-                ease: 'power2.inOut',
-                x: '+=6',
+                // アニメーションの各種設定
+                duration: 1.5,          // 完了するまでの時間
+                ease: 'power2.inOut',   // イージングの指定
+                x: '+=6',               // 現在の回転値に指定された値を追加
                 y: '+=3',
                 z: '+=1.5'
             }
@@ -192,13 +197,16 @@ window.addEventListener('scroll', () =>
 
 /**
  * Cursor
+ * tickのアニメーション関数内でカーソル制御を実装
  */
 const cursor = {}
+//NOTE: 0を初期値に代入し、マウスがまだ動かされていない状態でも、カメラが初期位置から突然動くことを防ぐ
 cursor.x = 0
 cursor.y = 0
 
 window.addEventListener('mousemove', (event) =>
 {
+    // マウスカーソルのX座標を0（左端）から1（右端）までの範囲に正規化して取得
     cursor.x = event.clientX / sizes.width - 0.5
     cursor.y = event.clientY / sizes.height - 0.5
 })
@@ -227,8 +235,21 @@ const tick = () =>
     */
     camera.position.y = - scrollY / sizes.height * objectsDistance
 
+    /* NOTE: カーソルによるカメラ制御
+    0.5を掛けることで、パララックス効果の強度を調整
+    結果的にparallaxXは-0.25から0.25の範囲になります。この値が、カメラが最終的に目指すべきX位置の目標値。
+    係数0.5は、マウスを端まで動かしてもカメラが大きく動きすぎないように、パララックスの度合いを制御。
+    */
     const parallaxX = cursor.x * 0.5
     const parallaxY = - cursor.y * 0.5
+    /* 補間（Lerp: Linear Interpolation）の概念に基づいた滑らかな動きを実装する一般的なテクニック
+        (parallaxX - cameraGroup.position.x): 現在のカメラのX位置と目標のX位置(parallaxX)との間の差を計算
+        * 5: 5は追従速度または補間係数です。この値が大きいほど、カメラは目標位置に素早く追従します。小さいほど、ゆっくりと滑らかに追従
+        deltaTime: 前回からのフレームからの経過時間。
+
+        全体として、この行は、cameraGroupのX位置を目標parallaxXに徐々に近づけていくように更新
+        これにより、マウスを動かしたときにカメラがカクカク動くのではなく、スムーズに追従するようにする
+    */
     cameraGroup.position.x += (parallaxX - cameraGroup.position.x) * 5 * deltaTime
     cameraGroup.position.y += (parallaxY - cameraGroup.position.y) * 5 * deltaTime
 
