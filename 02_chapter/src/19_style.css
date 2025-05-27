@@ -4,12 +4,13 @@
     padding: 0;
 }
 
-/* html, */
-/* body
+/* html,
+body
 {
     overflow: hidden;
 } */
 
+/* Canvas(Three.jsの描画領域)を画面に固定。スクロールしてもスクロールしても背景として常に表示される */
 .webgl
 {
     position: fixed;
@@ -18,21 +19,22 @@
     outline: none;
 }
 
-
+/* セクションの配置 */
 .section
 {
     display: flex;
     align-items: center;
     height: 100vh;
-    position: relative;
+    position: relative;                 /*キャンバスより全面に表示*/
     font-family: 'Cabin', sans-serif;
     color: #ffeded;
     text-transform: uppercase;
-    font-size: 7vmin;
+    font-size: 7vmin;                   /* ビューポートサイズに応じて調整 */
     padding-left: 10%;
     padding-right: 10%;
 }
 
+/* 奇数番目の Section を右寄せ */
 section:nth-child(odd)
 {
     justify-content: flex-end;
