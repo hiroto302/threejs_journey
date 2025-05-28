@@ -8,6 +8,20 @@ import CANNON from "cannon"
  * Debug
  */
 const gui = new GUI()
+const debugObject = {}
+debugObject.createSphere = () => {
+    console.log('Create a sphere')
+    createSphere(
+        Math.random() * 0.5,
+        {
+            x: (Math.random() - 0.5) * 3,
+            y: 3,
+            z: (Math.random() - 0.5) * 3
+        }
+    )
+}
+gui.add(debugObject, "createSphere")
+
 
 /**
  * Base
@@ -78,7 +92,7 @@ const sphereBody = new CANNON.Body({
     // material: plasticMaterial
 })
 // キャノンのようにX方向に力を与えてみる！
-sphereBody.applyLocalForce(new CANNON.Vec3(150, 0, 0), new CANNON.Vec3(0, 0, 0))
+// sphereBody.applyLocalForce(new CANNON.Vec3(150, 0, 0), new CANNON.Vec3(0, 0, 0))
 world.addBody(sphereBody)
 
 // Floor : 上記とは別の記法で実装
@@ -98,18 +112,18 @@ world.addBody(floorBody)
 /**
  * Test sphere
  */
-const sphere = new THREE.Mesh(
-    new THREE.SphereGeometry(0.5, 32, 32),
-    new THREE.MeshStandardMaterial({
-        metalness: 0.3,
-        roughness: 0.4,
-        envMap: environmentMapTexture,
-        envMapIntensity: 0.5
-    })
-)
-sphere.castShadow = true
-sphere.position.y = 0.5
-scene.add(sphere)
+// const sphere = new THREE.Mesh(
+//     new THREE.SphereGeometry(0.5, 32, 32),
+//     new THREE.MeshStandardMaterial({
+//         metalness: 0.3,
+//         roughness: 0.4,
+//         envMap: environmentMapTexture,
+//         envMapIntensity: 0.5
+//     })
+// )
+// sphere.castShadow = true
+// sphere.position.y = 0.5
+// scene.add(sphere)
 
 /**
  * Floor
@@ -192,6 +206,47 @@ renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
 /**
+ * Utils
+ */
+const objectsToUpdate = []
+const sphereGeometry = new THREE.SphereGeometry(1, 20, 20)
+const sphereMaterial = new THREE.MeshStandardMaterial({
+    metalness: 0.3,
+    roughness: 0.4,
+    envMap: environmentMapTexture
+})
+const createSphere = (radius, position) => {
+    // Three.js mesh
+    const mesh = new THREE.Mesh(
+        sphereGeometry,
+        sphereMaterial
+    )
+    mesh.scale.set(radius, radius, radius)
+    mesh.castShadow = true
+    mesh.position.copy(position)
+    scene.add(mesh)
+
+    // Cannon.js body
+    const shape = new CANNON.Sphere(radius)
+    const body = new CANNON.Body({
+        mass: 1,
+        position: new CANNON.Vec3(0, 3, 0),
+        shape: shape,
+        material: defaultMaterial
+    })
+    body.position.copy(position)
+    world.addBody(body)
+
+    // Save in objects to update
+    objectsToUpdate.push({
+        mesh: mesh,
+        body: body
+    })
+}
+createSphere(0.5, {x: 0, y: 3, z: 0})
+// createSphere(0.5, {x: 2, y: 3, z: 2})
+
+/**
  * Animate
  */
 const clock = new THREE.Clock()
@@ -206,14 +261,20 @@ const tick = () =>
     // Update physics world
 
     // アニメーションで力を与えてみる
-    sphereBody.applyLocalForce(new CANNON.Vec3(-0.5, 0, 0), sphereBody.position)
+    // sphereBody.applyLocalForce(new CANNON.Vec3(-0.5, 0, 0), sphereBody.position)
 
     world.step(1/60, deltaTime, 3)
     // Sphere に物理法則を適用
     // sphere.position.x = sphereBody.position.x
     // sphere.position.y = sphereBody.position.y
     // sphere.position.z = sphereBody.position.z
-    sphere.position.copy(sphereBody.position)       // コピーで一発でやろう!
+    // sphere.position.copy(sphereBody.position)       // コピーで一発でやろう!
+
+    //NOTE: Utilsメソッドで作成したSphereにアニメーションを仕掛ける
+    for(const object of objectsToUpdate)
+    {
+        object.mesh.position.copy(object.body.position)
+    }
 
     // Update controls
     controls.update()
