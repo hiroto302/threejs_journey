@@ -77,6 +77,8 @@ const sphereBody = new CANNON.Body({
     shape: sphereShape,
     // material: plasticMaterial
 })
+// キャノンのようにX方向に力を与えてみる！
+sphereBody.applyLocalForce(new CANNON.Vec3(150, 0, 0), new CANNON.Vec3(0, 0, 0))
 world.addBody(sphereBody)
 
 // Floor : 上記とは別の記法で実装
@@ -202,6 +204,10 @@ const tick = () =>
     oldElapsedTime = elapsedTime
 
     // Update physics world
+
+    // アニメーションで力を与えてみる
+    sphereBody.applyLocalForce(new CANNON.Vec3(-0.5, 0, 0), sphereBody.position)
+
     world.step(1/60, deltaTime, 3)
     // Sphere に物理法則を適用
     // sphere.position.x = sphereBody.position.x
