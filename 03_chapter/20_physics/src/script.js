@@ -36,22 +36,56 @@ const environmentMapTexture = cubeTextureLoader.load([
 /*
  * Physics
  */
+// World
 const world = new CANNON.World()
 world.gravity.set(0, -9.82, 0)
+
+// Material : バウンディング
+// const concreteMaterial = new CANNON.Material("concrete")    // Floor
+// const plasticMaterial = new CANNON.Material("plastic")      // Sphere
+// const concretePlasticMaterial = new CANNON.ContactMaterial(
+//     concreteMaterial,
+//     plasticMaterial,
+//     {
+//         // 跳ね返りの表現
+//         friction: 0.1,
+//         restitution: 0.7
+//     }
+// )
+// world.addContactMaterial(concretePlasticMaterial)
+
+// Material : デフォルト バウディング
+const defaultMaterial = new CANNON.Material("default")
+const defaultContactMaterial = new CANNON.ContactMaterial(
+    defaultMaterial,
+    defaultMaterial,
+    {
+        friction: 0.1,
+        restitution: 0.7
+    }
+)
+world.addContactMaterial(defaultContactMaterial)
+/* NOTE: 全てのデフォルトをここで指定するだけで、各オブジェクトのデフォルトに設定してくれる
+*/
+world.defaultContactMaterial = defaultContactMaterial
+
 // Sphere
 const sphereShape = new CANNON.Sphere(0.5)
 const sphereBody = new CANNON.Body({
     mass: 1,
     position: new CANNON.Vec3(0, 3, 0),
-    shape: sphereShape
+    shape: sphereShape,
+    // material: plasticMaterial
 })
 world.addBody(sphereBody)
 
 // Floor : 上記とは別の記法で実装
 const floorShape = new CANNON.Plane()
 const floorBody = new CANNON.Body()
+// floorBody.material = concreteMaterial;
 floorBody.mass = 0
 floorBody.addShape(floorShape)
+//NOTE: デフォルトでは垂直で床のようにボールの下には無い状態なので回転させる。-1であることが肝。
 floorBody.quaternion.setFromAxisAngle(
     new CANNON.Vec3(-1, 0, 0),
     Math.PI * 0.5
