@@ -36,6 +36,20 @@ debugObject.createBox = () => {
 }
 gui.add(debugObject, "createBox")
 
+debugObject.reset = () => {
+
+    for(const object of objectsToUpdate) {
+        // Remove body
+        object.body.removeEventListener("collide", playHitSound)
+        world.removeBody(object.body)
+        // Remove mesh
+        scene.remove(object.mesh)
+    }
+    //POINT: Not forget to empty the array !!
+    objectsToUpdate.splice(0, objectsToUpdate.length)
+}
+gui.add(debugObject, "reset")
+
 
 /**
  * Base
@@ -45,6 +59,23 @@ const canvas = document.querySelector('canvas.webgl')
 
 // Scene
 const scene = new THREE.Scene()
+
+/**
+ * Sounds: ここでは物体の colide・sleep・wakeup のEvent時に呼び出す
+ */
+const hitSound = new Audio("/sounds/hit.mp3")
+const playHitSound = (collision) => {
+    // contact property を確認して、衝突時に取得可能なプロパティを確認する
+    // console.log(collision)
+    console.log(collision.contact.getImpactVelocityAlongNormal())   // 衝突時の強さ
+
+    const impactStrength = collision.contact.getImpactVelocityAlongNormal()
+    if (impactStrength > 1.5) {
+        hitSound.volume = Math.random()
+        hitSound.currentTime = 0
+        hitSound.play()
+    }
+}
 
 /**
  * Textures
@@ -294,6 +325,7 @@ const createBox = (width, height, depth, position) => {
         material: defaultMaterial
     })
     body.position.copy(position)
+    body.addEventListener("collide", playHitSound)
     world.addBody(body)
 
     // Save in objects to update
