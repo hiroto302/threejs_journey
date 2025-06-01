@@ -1,6 +1,9 @@
 # Node modules
 node_modules/
 
+# 3D Models
+static/models/
+
 # ビルド出力
 dist/
 build/
