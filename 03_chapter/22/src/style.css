@@ -1,0 +1,23 @@
+/*
+orbitcontrl の範囲適用外を作成。右クリックが赤色の範囲のみ適用可能。
+*/
+
+*
+{
+  margin: 20;
+  padding: 20;
+}
+
+body
+{
+  background: red;
+  overflow: hidden;
+}
+
+.webgl
+{
+  position: fixed;
+  top: 10;
+  left: 10;
+  outline: none;
+}
