@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import GUI from 'lil-gui'
+import { isTypedArray } from 'three/src/animation/AnimationUtils.js'
 
 /**
  * Base
@@ -35,6 +36,25 @@ const object3 = new THREE.Mesh(
 object3.position.x = 2
 
 scene.add(object1, object2, object3)
+
+/**
+ * Raycaster
+ */
+const raycaster = new THREE.Raycaster()
+
+// const rayOrigin = new THREE.Vector3(-3, 0, 0)
+// const rayDirection = new THREE.Vector3(10, 0, 0)
+// rayDirection.normalize()
+
+// raycaster.set(rayOrigin, rayDirection)
+
+// const intersect = raycaster.intersectObject(object2)
+// const intersects = raycaster.intersectObjects([object1, object2, object3])
+
+
+
+
+
 
 /**
  * Sizes
@@ -88,6 +108,33 @@ const clock = new THREE.Clock()
 const tick = () =>
 {
     const elapsedTime = clock.getElapsedTime()
+
+    // Animate Objects
+    object1.position.y = Math.sin(elapsedTime * 0.3) * 1.5
+    object2.position.y = Math.sin(elapsedTime * 0.8) * 1.5
+    object3.position.y = Math.sin(elapsedTime * 1.4) * 1.5
+
+    // Cast a ray
+    const rayOrigin = new THREE.Vector3(-3, 0, 0)
+    const rayDirection = new THREE.Vector3(1, 0, 0)
+    rayDirection.normalize()
+    raycaster.set(rayOrigin, rayDirection)
+
+    const objectsToTest = [object1, object2, object3]
+    const intersects = raycaster.intersectObjects(objectsToTest)
+    // console.log(intersects)
+
+    for (const object of objectsToTest)
+    {
+        object.material.color.set("#ff0000")
+    }
+
+    for (const intersect of intersects)
+    {
+        // console.log(intersect.object)
+        intersect.object.material.color.set("#0000ff")
+    }
+
 
     // Update controls
     controls.update()
