@@ -1,6 +1,15 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 import GUI from 'lil-gui'
+import { mix } from 'three/src/nodes/TSL.js'
+import { ConstNode } from 'three/webgpu'
+
+//TODO: draco loader is located in: nodes_modules/three/examples/jsm/draco を static フォルダ内に移動させた
+
+//NOTE: 使用する Model が正しいものかを判別するために、「Three.js Editor」を活用しよう！
+// モデルのバイナリファイルを Drag&Dropしてみて！
 
 /**
  * Base
@@ -13,6 +22,103 @@ const canvas = document.querySelector('canvas.webgl')
 
 // Scene
 const scene = new THREE.Scene()
+
+/**
+ * Models
+ */
+const gltfLoader = new GLTFLoader()
+
+// Duck
+gltfLoader.load(
+    "/models/Duck/glTF/Duck.gltf",
+    // 各コールバック関数
+    (gltf) =>
+    {
+        // console.log(gltf);
+        // scene.add(gltf.scene.children[0])
+        console.log("Success Duck")
+    },
+    () =>
+    {
+        console.log("Progress")
+    },
+    () =>
+    {
+        console.log("error")
+    }
+)
+// Helmet
+gltfLoader.load(
+    "/models/FlightHelmet/glTF/FlightHelmet.gltf",
+    (gltf) =>
+    {
+        //NOTE: ヘルメットの構成を確認すると、Mesh の Array の要素が5つある。これらのChildren全てを追加して表示する必要がある！
+        console.log(gltf.scene)
+
+        // scene.add(gltf.scene.children[0])
+
+        // for (const child of gltf.scene.children)
+        // {
+        //     scene.add(child)
+        // }
+
+        // NOTE: 全ての構成要素を追加していく！
+        // while(gltf.scene.children[0])
+        // {
+        //     // 追加していく毎に、modelを構成してるArrayのChildrenの要素は小さくなっていく　
+        //     scene.add(gltf.scene.children[0])
+        // }
+
+        // const children = [...gltf.scene.children]
+        // console.log(children)
+        // for(const child of children)
+        // {
+        //     scene.add(child)
+        // }
+
+        //NOTE: 結局、GroupをSceneに追加することが一番シンプルで良い
+        // scene.add(gltf.scene)
+
+
+        console.log("Success Helmet")
+    }
+)
+
+//NOTE: Draco Loaderであれば、GLTFバージョンも問題なく動作させることができるよ
+// Draco バージョンをLoadする方法
+const dracoLoader = new DRACOLoader()
+dracoLoader.setDecoderPath("/draco/")
+gltfLoader.setDRACOLoader(dracoLoader)
+
+gltfLoader.load(
+    "/models/Duck/glTF-Draco/Duck.gltf",
+    (gltf) =>
+    {
+        // scene.add(gltf.scene)
+    }
+)
+
+//NOTE: Animations
+let mixer = null
+gltfLoader.load(
+    "/models/Fox/glTF/Fox.gltf",
+    (gltf) =>
+    {
+        // Animation Clipがあるか確認
+        console.log(gltf.animations)
+
+        // AnimationMixer for Handling Animation
+        mixer = new THREE.AnimationMixer(gltf.scene)
+        const action = mixer.clipAction(gltf.animations[0])
+        console.log(action)
+        //NOTE: Update させなければ Play 実行しても レンダリング上は更新されないので注意!
+        action.play()
+
+
+        gltf.scene.scale.set(0.025, 0.025, 0.025)
+        scene.add(gltf.scene)
+    }
+)
 
 /**
  * Floor
@@ -104,6 +210,12 @@ const tick = () =>
     const elapsedTime = clock.getElapsedTime()
     const deltaTime = elapsedTime - previousTime
     previousTime = elapsedTime
+
+    // Update mixer
+    if (mixer !== null)
+    {
+        mixer.update(deltaTime)
+    }
 
     // Update controls
     controls.update()
