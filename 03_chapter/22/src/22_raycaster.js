@@ -3,6 +3,8 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import GUI from 'lil-gui'
 import { isTypedArray } from 'three/src/animation/AnimationUtils.js'
 
+//NOTE: 画面横にRayを作成し、触れたObjectのMaterial Color を変更するサンプル
+
 /**
  * Base
  */
@@ -50,10 +52,6 @@ const raycaster = new THREE.Raycaster()
 
 // const intersect = raycaster.intersectObject(object2)
 // const intersects = raycaster.intersectObjects([object1, object2, object3])
-
-
-
-
 
 
 /**
