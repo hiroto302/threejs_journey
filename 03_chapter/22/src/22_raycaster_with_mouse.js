@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import GUI from 'lil-gui'
 import { isTypedArray } from 'three/src/animation/AnimationUtils.js'
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js"
 
 /**
  * Base
@@ -42,6 +43,7 @@ scene.add(object1, object2, object3)
  */
 const raycaster = new THREE.Raycaster()
 
+
 /**
  * Sizes
  */
@@ -70,6 +72,7 @@ window.addEventListener('resize', () =>
  */
 const mouse = new THREE.Vector2()
 
+let mouseHasMoved = false
 window.addEventListener("mousemove", (event) =>
 {
     /*NOTE: 画面の座標位置取得
@@ -78,6 +81,8 @@ window.addEventListener("mousemove", (event) =>
     */
     mouse.x = event.clientX / sizes.width * 2 - 1
     mouse.y = - event.clientY / sizes.height * 2 + 1
+
+    mouseHasMoved = true
 })
 
 window.addEventListener("click", () =>
@@ -130,6 +135,30 @@ renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
 /**
+ * Model
+ */
+const gltfLoader = new GLTFLoader()
+let model = null
+gltfLoader.load(
+  "./models/Duck/glTF-Binary/Duck.glb",
+  (gltf) =>
+  {
+    // console.log("load success")
+    model = gltf.scene
+    model.position.y = - 1
+    scene.add(model)
+  }
+)
+
+/**
+ * Light
+ */
+const ambientLight = new THREE.AmbientLight("#ffffff", 0.1)
+const directionalLight = new THREE.DirectionalLight("#ffffff", 2.1)
+directionalLight.position.set(1, 2, 3)
+scene.add(ambientLight, directionalLight)
+
+/**
  * Animate
  */
 const clock = new THREE.Clock()
@@ -178,6 +207,23 @@ const tick = () =>
       }
       // console.log("nothing being hovered")
       currentIntersect = null
+    }
+
+    // Test Intersect with Model
+    if (model)
+    {
+      const modelIntersects = raycaster.intersectObject(model)
+
+      // NOTE: Mouse のカーソル位置の初期値は、(0, 0)。なので以下のようにしなければ、画面起動時、アヒルのモデルが 1.2→１→1.2倍のような挙動になってしまう。
+      // 実際にマウスが動いてからのみレイキャスティングを開始
+      if (modelIntersects.length && mouseHasMoved)
+      {
+        model.scale.set(1.2, 1.2, 1.2)
+      }
+      else
+      {
+        model.scale.set(1, 1, 1)
+      }
     }
 
     // Update controls
