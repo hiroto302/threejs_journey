@@ -13,4 +13,9 @@ npm run dev
 
 # Build for production in the dist/ directory
 npm run build
+
+# Install other modules
+npm install lil-gui
+npm install gsap
 ```
+
