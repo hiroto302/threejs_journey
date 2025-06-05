@@ -6,8 +6,29 @@ import GUI from 'lil-gui'
 /**
  * NOTE: lil-gui Debug
  * パラメーターとして、Object or Property of that object を渡す
+ * Setup することが可能 (widthとか)
+ * 
+ * Three.js プロダクトを見たら、URLの最後尾に 「#Debug」を記載したら DebugUI が表示されるか
+ * 
+ * 他にも多くの、Debug 手法があるので 「lil-gui.georgealways.com」を確認しよう
  */
-const gui = new GUI()
+const gui = new GUI({
+    width: 300,
+    title: 'Nice Debug UI',  // デフォルトは Controls
+    closeFolders: true       // Rootフォルダである、 Nice Debug UI 以下のフォルダが Close される
+})
+gui.close() // Rootである自身を閉じる
+// gui.hide()  // DebugUIの非表示
+//NOTE: Toggling で 非表示を切り替えれるようにする
+window.addEventListener('keydown', (event) => {
+    if(event.key == 'h'){
+        gui.show(gui._hidden);
+    }
+})
+
+
+
+
 /*NOTE: 色を変更した時、毎回Logを確認しながら反映させるのは面倒。そこで、global・parameters・debugObject と呼ばれるようなものを利用
     Three.js 外部で取得した color Debugした値を直接 参考にできる
 */
@@ -32,12 +53,15 @@ const material = new THREE.MeshBasicMaterial({ color: debugObject.color, wirefra
 const mesh = new THREE.Mesh(geometry, material)
 scene.add(mesh)
 
+//NOTE: 多くの DebugUI をオブジェクトに適用すると混在していく。そこで、Folder を 活用しよう！
+// ネストして Folderを作成していくことが出来る
 const cubeTweaks = gui.addFolder('Awesome cube')
+cubeTweaks.close()
 
 //NOTE: Range
-gui.add(mesh.position, 'x', -3, 3, 0.1)
-gui.add(mesh.position, 'y').min(-3).max(3).step(0.1)
-gui.add(mesh.position, 'z').min(-3).max(3).step(0.1).name('奥行き')
+cubeTweaks.add(mesh.position, 'x', -3, 3, 0.1)
+cubeTweaks.add(mesh.position, 'y').min(-3).max(3).step(0.1)
+cubeTweaks.add(mesh.position, 'z').min(-3).max(3).step(0.1).name('奥行き')
 
 // const myObj = {
 //     myVariable: 1337
@@ -45,8 +69,8 @@ gui.add(mesh.position, 'z').min(-3).max(3).step(0.1).name('奥行き')
 // gui.add(myObj, 'myVariable')
 
 //NOTE: CheckBox
-gui.add(mesh, 'visible')
-gui.add(mesh.material, 'wireframe')
+cubeTweaks.add(mesh, 'visible')
+cubeTweaks.add(mesh.material, 'wireframe')
 
 /*NOTE: Color
     色に関しては、Three.js と lil-gui 上で表示されるパラメータの色が一致しない
@@ -54,7 +78,7 @@ gui.add(mesh.material, 'wireframe')
 
 */
 // gui.addColor(material, 'color') これだと一致しない
-gui.addColor(mesh.material, "color").name("mesh color").onChange((value) =>
+cubeTweaks.addColor(mesh.material, "color").name("mesh color").onChange((value) =>
 {
     // console.log("three.js material color : " + material.color)
     console.log(value)
@@ -63,7 +87,7 @@ gui.addColor(mesh.material, "color").name("mesh color").onChange((value) =>
 })
 
 // debugOject を利用して、Three.js 外部の color value を取得すれば上記のように Hex カラーコードは必要ない
-gui.addColor(debugObject, "color").name("debug color").onChange((value) =>
+cubeTweaks.addColor(debugObject, "color").name("debug color").onChange((value) =>
     {
         // Update DebugObject Color
         material.color.set(value)
@@ -73,11 +97,11 @@ gui.addColor(debugObject, "color").name("debug color").onChange((value) =>
 debugObject.spin = () => {
     gsap.to(mesh.rotation, { y: mesh.rotation.y + Math.PI * 2})
 }
-gui.add(debugObject, 'spin')
+cubeTweaks.add(debugObject, 'spin')
 
 // NOTE: Segments
 debugObject.subdivision = 2
-gui.add(debugObject, 'subdivision').min(1).max(20).step(1).onChange((value) => {
+cubeTweaks.add(debugObject, 'subdivision').min(1).max(20).step(1).onChange((value) => {
     console.log('subdivision changed')
     // WARNING: The old geometries are still sitting somewhere in the GPU memory which can create a memory leak
     // NOTE: So don't forget to Dispose old there !!
@@ -86,7 +110,6 @@ gui.add(debugObject, 'subdivision').min(1).max(20).step(1).onChange((value) => {
         1, 1, 1,                // size
         value, value, value     // segments
     )
-    
 })
 
 
