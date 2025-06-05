@@ -32,6 +32,8 @@ const material = new THREE.MeshBasicMaterial({ color: debugObject.color, wirefra
 const mesh = new THREE.Mesh(geometry, material)
 scene.add(mesh)
 
+const cubeTweaks = gui.addFolder('Awesome cube')
+
 //NOTE: Range
 gui.add(mesh.position, 'x', -3, 3, 0.1)
 gui.add(mesh.position, 'y').min(-3).max(3).step(0.1)
@@ -72,6 +74,20 @@ debugObject.spin = () => {
     gsap.to(mesh.rotation, { y: mesh.rotation.y + Math.PI * 2})
 }
 gui.add(debugObject, 'spin')
+
+// NOTE: Segments
+debugObject.subdivision = 2
+gui.add(debugObject, 'subdivision').min(1).max(20).step(1).onChange((value) => {
+    console.log('subdivision changed')
+    // WARNING: The old geometries are still sitting somewhere in the GPU memory which can create a memory leak
+    // NOTE: So don't forget to Dispose old there !!
+    mesh.geometry.dispose()
+    mesh.geometry = new THREE.BoxGeometry(
+        1, 1, 1,                // size
+        value, value, value     // segments
+    )
+    
+})
 
 
 /**
