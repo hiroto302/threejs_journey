@@ -9,8 +9,7 @@
 import test from './test.js';
 // test();                                      // 1: 関数
 // const testInstance = new test();             // 2: クラスをインスタンス化
-console.log(test.hello)
-
+// console.log(test.hello)
 
 /**
  * NOTE: Named の Import 方法
@@ -19,9 +18,22 @@ console.log(test.hello)
  */
 import { oneThing, anotherThing } from "./test.js";
 import { yetAnother as YETAno } from './test.js';
-console.log(oneThing)
-console.log(anotherThing())
-console.log(YETAno())
+// console.log(oneThing)
+// console.log(anotherThing())
+// console.log(YETAno())
+
+/**
+ * Classes
+ */
+import { Robot } from './Robot/Robot.js';
+import { FlyingRobot } from './Robot/FlyingRobot.js';
+
+
+const wallE = new Robot("Wall-E", 2)
+console.log(wallE.legs)
+
+const astroBoy = new FlyingRobot("Astro-Boy", 3)
+
 
 
 
