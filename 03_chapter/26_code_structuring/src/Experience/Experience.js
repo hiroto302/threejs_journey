@@ -1,4 +1,5 @@
 import Sizes from "./Utils/Sizes"
+import Time from "./Utils/Time"
 
 export default class Experience
 {
@@ -14,5 +15,27 @@ export default class Experience
 
     // Setup
     this.sizes = new Sizes()
+    this.time = new Time()
+
+    //NOTE: EventEmitter.js のクラスを活用
+    this.sizes.on('resize', () =>
+    {
+      this.resize()
+    })
+
+    this.time.on('tick', () =>
+    {
+      this.update()
+    })
+  }
+
+  resize()
+  {
+    console.log('Experience.js heard a Sizes Event with Resize')
+  }
+
+  update()
+  {
+    // console.log("Experience.js heard a Time Event with Tick")
   }
 }
