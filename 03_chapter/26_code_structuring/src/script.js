@@ -28,11 +28,14 @@ import { yetAnother as YETAno } from './test.js';
 import { Robot } from './Robot/Robot.js';
 import { FlyingRobot } from './Robot/FlyingRobot.js';
 
-
 const wallE = new Robot("Wall-E", 2)
 console.log(wallE.legs)
 
 const astroBoy = new FlyingRobot("Astro-Boy", 3)
+
+
+import Experience from './Experience/Experience.js';
+const experience = new Experience(document.querySelector('canvas.webgl'))
 
 
 
