@@ -1,204 +1,233 @@
-import * as THREE from 'three'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import GUI from 'lil-gui'
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+// NOTE: このクラスが Entry Class (Main Class) の役割を担っている
+// NOTE: Module として各機能を切り分ける。 test.js で色々試してみる
 
 /**
- * Loaders
+ * NOTE: Default の Import 方法
+ * 1つのファイルから1つだけ、好きな名前でimport可能
  */
-const gltfLoader = new GLTFLoader()
-const textureLoader = new THREE.TextureLoader()
-const cubeTextureLoader = new THREE.CubeTextureLoader()
+
+import test from './test.js';
+// test();                                      // 1: 関数
+// const testInstance = new test();             // 2: クラスをインスタンス化
+console.log(test.hello)
+
 
 /**
- * Base
+ * NOTE: Named の Import 方法
+ * Default 以外から test.js が export しているものを まとめて Import する
+ * 名前を変更して import することも可能！
  */
-// Debug
-const gui = new GUI()
-const debugObject = {}
+import { oneThing, anotherThing } from "./test.js";
+import { yetAnother as YETAno } from './test.js';
+console.log(oneThing)
+console.log(anotherThing())
+console.log(YETAno())
 
-// Canvas
-const canvas = document.querySelector('canvas.webgl')
 
-// Scene
-const scene = new THREE.Scene()
 
-/**
- * Update all materials
- */
-const updateAllMaterials = () =>
-{
-    scene.traverse((child) =>
-    {
-        if(child instanceof THREE.Mesh && child.material instanceof THREE.MeshStandardMaterial)
-        {
-            // child.material.envMap = environmentMap
-            child.material.envMapIntensity = debugObject.envMapIntensity
-            child.material.needsUpdate = true
-            child.castShadow = true
-            child.receiveShadow = true
-        }
-    })
-}
 
-/**
- * Environment map
- */
-const environmentMap = cubeTextureLoader.load([
-    '/textures/environmentMap/px.jpg',
-    '/textures/environmentMap/nx.jpg',
-    '/textures/environmentMap/py.jpg',
-    '/textures/environmentMap/ny.jpg',
-    '/textures/environmentMap/pz.jpg',
-    '/textures/environmentMap/nz.jpg'
-])
+// NOTE: Three.js は以下のように、クラスの全てのModuleを取得している
+// import * as THREE from 'three'
+// import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+// import GUI from 'lil-gui'
+// import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
-environmentMap.colorSpace = THREE.SRGBColorSpace
+// /**
+//  * Loaders
+//  */
+// const gltfLoader = new GLTFLoader()
+// const textureLoader = new THREE.TextureLoader()
+// const cubeTextureLoader = new THREE.CubeTextureLoader()
 
-// scene.background = environmentMap
-scene.environment = environmentMap
+// /**
+//  * Base
+//  */
+// // Debug
+// const gui = new GUI()
+// const debugObject = {}
 
-debugObject.envMapIntensity = 0.4
-gui.add(debugObject, 'envMapIntensity').min(0).max(4).step(0.001).onChange(updateAllMaterials)
+// // Canvas
+// const canvas = document.querySelector('canvas.webgl')
 
-/**
- * Models
- */
-let foxMixer = null
+// // Scene
+// const scene = new THREE.Scene()
 
-gltfLoader.load(
-    '/models/Fox/glTF/Fox.gltf',
-    (gltf) =>
-    {
-        // Model
-        gltf.scene.scale.set(0.02, 0.02, 0.02)
-        scene.add(gltf.scene)
+// /**
+//  * Update all materials
+//  */
+// const updateAllMaterials = () =>
+// {
+//     scene.traverse((child) =>
+//     {
+//         if(child instanceof THREE.Mesh && child.material instanceof THREE.MeshStandardMaterial)
+//         {
+//             // child.material.envMap = environmentMap
+//             child.material.envMapIntensity = debugObject.envMapIntensity
+//             child.material.needsUpdate = true
+//             child.castShadow = true
+//             child.receiveShadow = true
+//         }
+//     })
+// }
 
-        // Animation
-        foxMixer = new THREE.AnimationMixer(gltf.scene)
-        const foxAction = foxMixer.clipAction(gltf.animations[0])
-        foxAction.play()
+// /**
+//  * Environment map
+//  */
+// const environmentMap = cubeTextureLoader.load([
+//     '/textures/environmentMap/px.jpg',
+//     '/textures/environmentMap/nx.jpg',
+//     '/textures/environmentMap/py.jpg',
+//     '/textures/environmentMap/ny.jpg',
+//     '/textures/environmentMap/pz.jpg',
+//     '/textures/environmentMap/nz.jpg'
+// ])
 
-        // Update materials
-        updateAllMaterials()
-    }
-)
+// environmentMap.colorSpace = THREE.SRGBColorSpace
 
-/**
- * Floor
- */
-const floorColorTexture = textureLoader.load('textures/dirt/color.jpg')
-floorColorTexture.colorSpace = THREE.SRGBColorSpace
-floorColorTexture.repeat.set(1.5, 1.5)
-floorColorTexture.wrapS = THREE.RepeatWrapping
-floorColorTexture.wrapT = THREE.RepeatWrapping
+// // scene.background = environmentMap
+// scene.environment = environmentMap
 
-const floorNormalTexture = textureLoader.load('textures/dirt/normal.jpg')
-floorNormalTexture.repeat.set(1.5, 1.5)
-floorNormalTexture.wrapS = THREE.RepeatWrapping
-floorNormalTexture.wrapT = THREE.RepeatWrapping
+// debugObject.envMapIntensity = 0.4
+// gui.add(debugObject, 'envMapIntensity').min(0).max(4).step(0.001).onChange(updateAllMaterials)
 
-const floorGeometry = new THREE.CircleGeometry(5, 64)
-const floorMaterial = new THREE.MeshStandardMaterial({
-    map: floorColorTexture,
-    normalMap: floorNormalTexture
-})
-const floor = new THREE.Mesh(floorGeometry, floorMaterial)
-floor.rotation.x = - Math.PI * 0.5
-scene.add(floor)
+// /**
+//  * Models
+//  */
+// let foxMixer = null
 
-/**
- * Lights
- */
-const directionalLight = new THREE.DirectionalLight('#ffffff', 4)
-directionalLight.castShadow = true
-directionalLight.shadow.camera.far = 15
-directionalLight.shadow.mapSize.set(1024, 1024)
-directionalLight.shadow.normalBias = 0.05
-directionalLight.position.set(3.5, 2, - 1.25)
-scene.add(directionalLight)
+// gltfLoader.load(
+//     '/models/Fox/glTF/Fox.gltf',
+//     (gltf) =>
+//     {
+//         // Model
+//         gltf.scene.scale.set(0.02, 0.02, 0.02)
+//         scene.add(gltf.scene)
 
-gui.add(directionalLight, 'intensity').min(0).max(10).step(0.001).name('lightIntensity')
-gui.add(directionalLight.position, 'x').min(- 5).max(5).step(0.001).name('lightX')
-gui.add(directionalLight.position, 'y').min(- 5).max(5).step(0.001).name('lightY')
-gui.add(directionalLight.position, 'z').min(- 5).max(5).step(0.001).name('lightZ')
+//         // Animation
+//         foxMixer = new THREE.AnimationMixer(gltf.scene)
+//         const foxAction = foxMixer.clipAction(gltf.animations[0])
+//         foxAction.play()
 
-/**
- * Sizes
- */
-const sizes = {
-    width: window.innerWidth,
-    height: window.innerHeight
-}
+//         // Update materials
+//         updateAllMaterials()
+//     }
+// )
 
-window.addEventListener('resize', () =>
-{
-    // Update sizes
-    sizes.width = window.innerWidth
-    sizes.height = window.innerHeight
+// /**
+//  * Floor
+//  */
+// const floorColorTexture = textureLoader.load('textures/dirt/color.jpg')
+// floorColorTexture.colorSpace = THREE.SRGBColorSpace
+// floorColorTexture.repeat.set(1.5, 1.5)
+// floorColorTexture.wrapS = THREE.RepeatWrapping
+// floorColorTexture.wrapT = THREE.RepeatWrapping
 
-    // Update camera
-    camera.aspect = sizes.width / sizes.height
-    camera.updateProjectionMatrix()
+// const floorNormalTexture = textureLoader.load('textures/dirt/normal.jpg')
+// floorNormalTexture.repeat.set(1.5, 1.5)
+// floorNormalTexture.wrapS = THREE.RepeatWrapping
+// floorNormalTexture.wrapT = THREE.RepeatWrapping
 
-    // Update renderer
-    renderer.setSize(sizes.width, sizes.height)
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-})
+// const floorGeometry = new THREE.CircleGeometry(5, 64)
+// const floorMaterial = new THREE.MeshStandardMaterial({
+//     map: floorColorTexture,
+//     normalMap: floorNormalTexture
+// })
+// const floor = new THREE.Mesh(floorGeometry, floorMaterial)
+// floor.rotation.x = - Math.PI * 0.5
+// scene.add(floor)
 
-/**
- * Camera
- */
-// Base camera
-const camera = new THREE.PerspectiveCamera(35, sizes.width / sizes.height, 0.1, 100)
-camera.position.set(6, 4, 8)
-scene.add(camera)
+// /**
+//  * Lights
+//  */
+// const directionalLight = new THREE.DirectionalLight('#ffffff', 4)
+// directionalLight.castShadow = true
+// directionalLight.shadow.camera.far = 15
+// directionalLight.shadow.mapSize.set(1024, 1024)
+// directionalLight.shadow.normalBias = 0.05
+// directionalLight.position.set(3.5, 2, - 1.25)
+// scene.add(directionalLight)
 
-// Controls
-const controls = new OrbitControls(camera, canvas)
-controls.enableDamping = true
+// gui.add(directionalLight, 'intensity').min(0).max(10).step(0.001).name('lightIntensity')
+// gui.add(directionalLight.position, 'x').min(- 5).max(5).step(0.001).name('lightX')
+// gui.add(directionalLight.position, 'y').min(- 5).max(5).step(0.001).name('lightY')
+// gui.add(directionalLight.position, 'z').min(- 5).max(5).step(0.001).name('lightZ')
 
-/**
- * Renderer
- */
-const renderer = new THREE.WebGLRenderer({
-    canvas: canvas,
-    antialias: true
-})
-renderer.toneMapping = THREE.CineonToneMapping
-renderer.toneMappingExposure = 1.75
-renderer.shadowMap.enabled = true
-renderer.shadowMap.type = THREE.PCFSoftShadowMap
-renderer.setClearColor('#211d20')
-renderer.setSize(sizes.width, sizes.height)
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+// /**
+//  * Sizes
+//  */
+// const sizes = {
+//     width: window.innerWidth,
+//     height: window.innerHeight
+// }
 
-/**
- * Animate
- */
-const clock = new THREE.Clock()
-let previousTime = 0
+// window.addEventListener('resize', () =>
+// {
+//     // Update sizes
+//     sizes.width = window.innerWidth
+//     sizes.height = window.innerHeight
 
-const tick = () =>
-{
-    const elapsedTime = clock.getElapsedTime()
-    const deltaTime = elapsedTime - previousTime
-    previousTime = elapsedTime
+//     // Update camera
+//     camera.aspect = sizes.width / sizes.height
+//     camera.updateProjectionMatrix()
 
-    // Update controls
-    controls.update()
+//     // Update renderer
+//     renderer.setSize(sizes.width, sizes.height)
+//     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+// })
 
-    // Fox animation
-    if(foxMixer)
-    {
-        foxMixer.update(deltaTime)
-    }
+// /**
+//  * Camera
+//  */
+// // Base camera
+// const camera = new THREE.PerspectiveCamera(35, sizes.width / sizes.height, 0.1, 100)
+// camera.position.set(6, 4, 8)
+// scene.add(camera)
 
-    // Render
-    renderer.render(scene, camera)
+// // Controls
+// const controls = new OrbitControls(camera, canvas)
+// controls.enableDamping = true
 
-    // Call tick again on the next frame
-    window.requestAnimationFrame(tick)
-}
+// /**
+//  * Renderer
+//  */
+// const renderer = new THREE.WebGLRenderer({
+//     canvas: canvas,
+//     antialias: true
+// })
+// renderer.toneMapping = THREE.CineonToneMapping
+// renderer.toneMappingExposure = 1.75
+// renderer.shadowMap.enabled = true
+// renderer.shadowMap.type = THREE.PCFSoftShadowMap
+// renderer.setClearColor('#211d20')
+// renderer.setSize(sizes.width, sizes.height)
+// renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
-tick()
+// /**
+//  * Animate
+//  */
+// const clock = new THREE.Clock()
+// let previousTime = 0
+
+// const tick = () =>
+// {
+//     const elapsedTime = clock.getElapsedTime()
+//     const deltaTime = elapsedTime - previousTime
+//     previousTime = elapsedTime
+
+//     // Update controls
+//     controls.update()
+
+//     // Fox animation
+//     if(foxMixer)
+//     {
+//         foxMixer.update(deltaTime)
+//     }
+
+//     // Render
+//     renderer.render(scene, camera)
+
+//     // Call tick again on the next frame
+//     window.requestAnimationFrame(tick)
+// }
+
+// tick()
