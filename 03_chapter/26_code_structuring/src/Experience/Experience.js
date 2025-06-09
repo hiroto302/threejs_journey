@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import Sizes from "./Utils/Sizes"
 import Time from "./Utils/Time"
 import Camera from './Camera'
+import Renderer from './Renderer'
 
 //NOTE: Singleton
 let instance = null
@@ -29,7 +30,7 @@ export default class Experience
     this.time = new Time()
     this.scene = new THREE.Scene()
     this.camera = new Camera()
-
+    this.renderer = new Renderer()
 
     //NOTE: EventEmitter.js のクラスを活用
     this.sizes.on('resize', () =>
@@ -47,11 +48,15 @@ export default class Experience
   {
     console.log('Experience.js heard a Sizes Event with Resize')
     this.camera.resize()
+    this.renderer.resize()
   }
 
   update()
   {
     // console.log("Experience.js heard a Time Event with Tick")
+
+    //POINT: camera → renderer の順序で更新すること
     this.camera.update()
+    this.renderer.update()
   }
 }
