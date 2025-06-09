@@ -1,10 +1,21 @@
+import * as THREE from 'three'
 import Sizes from "./Utils/Sizes"
 import Time from "./Utils/Time"
+import Camera from './Camera'
+
+//NOTE: Singleton
+let instance = null
 
 export default class Experience
 {
   constructor(canvas)
   {
+    if (instance)
+    {
+      return instance
+    }
+    instance = this
+
     console.log("Here starts a great experience")
 
     //NOTE: Global Access. コンソールに experience と打つと、クラスのインスタンス情報が見れる
@@ -16,6 +27,9 @@ export default class Experience
     // Setup
     this.sizes = new Sizes()
     this.time = new Time()
+    this.scene = new THREE.Scene()
+    this.camera = new Camera()
+
 
     //NOTE: EventEmitter.js のクラスを活用
     this.sizes.on('resize', () =>
@@ -32,10 +46,12 @@ export default class Experience
   resize()
   {
     console.log('Experience.js heard a Sizes Event with Resize')
+    this.camera.resize()
   }
 
   update()
   {
     // console.log("Experience.js heard a Time Event with Tick")
+    this.camera.update()
   }
 }
