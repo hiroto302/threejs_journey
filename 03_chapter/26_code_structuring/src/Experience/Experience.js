@@ -3,6 +3,7 @@ import Sizes from "./Utils/Sizes"
 import Time from "./Utils/Time"
 import Camera from './Camera'
 import Renderer from './Renderer'
+import World from './World/World'
 
 //NOTE: Singleton
 let instance = null
@@ -31,6 +32,7 @@ export default class Experience
     this.scene = new THREE.Scene()
     this.camera = new Camera()
     this.renderer = new Renderer()
+    this.world = new World()
 
     //NOTE: EventEmitter.js のクラスを活用
     this.sizes.on('resize', () =>
