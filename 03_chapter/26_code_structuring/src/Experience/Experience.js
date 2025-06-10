@@ -60,6 +60,7 @@ export default class Experience
 
     //POINT: camera → renderer の順序で更新すること
     this.camera.update()
+    this.world.update()
     this.renderer.update()
   }
 }

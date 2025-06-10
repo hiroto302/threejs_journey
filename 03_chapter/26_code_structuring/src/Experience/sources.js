@@ -27,5 +27,11 @@ export default [
     name: 'grassNormalTexture',
     type: 'texture',
     path: 'textures/dirt/normal.jpg'
+  },
+  // Fox Model
+  {
+    name: 'foxModel',
+    type: 'gltfModel',
+    path: 'models/Fox/glTF/Fox.gltf'
   }
 ]

@@ -50,6 +50,5 @@ export default class Floor
     this.mesh.rotation.x = - Math.PI * 0.5
     this.mesh.receiveShadow = true
     this.scene.add(this.mesh)
-    console.log("HELLO MESH")
   }
 }
