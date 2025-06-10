@@ -65,4 +65,38 @@ export default class Experience
     this.world.update()
     this.renderer.update()
   }
+
+  //NOTE: GPU を考慮する。メモリーリーク対策
+  destroy()
+  {
+    this.sizes.off('resize')
+    this.time.off('tick')
+
+    // Traverse the whole scene
+    this.scene.traverse((child) =>
+    {
+      if(child instanceof THREE.Mesh)
+      {
+        child.geometry.dispose()
+
+        for (const key in child.material)
+        {
+          const value = child.material[key]
+          // console.log(value)
+
+          if(value && typeof value.dispose == 'function')
+          {
+            value.dispose()
+          }
+        }
+      }
+    })
+
+    //WARNING: post-processing を使用しているときは、EffectComposer と WebGLRendererTarget なるものをDisposeする必要があるらしい
+    this.camera.controls.dispose()
+    this.renderer.instance.dispose()
+
+    if(this.debug.active)
+        this.debug.ui.destroy()
+  }
 }
