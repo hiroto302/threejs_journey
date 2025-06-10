@@ -23,3 +23,25 @@ npm run dev
 # Build for production in the dist/ directory
 npm run build
 ```
+
+## vite-plugin-glsl
+### Shader(.glsl) を .js 上で扱うために vite-plugin-glsl をインストール
+``` bash
+npm i vite-plugin-glsl
+```
+### vite.config.js のプラグインの項目に以下を追加
+``` vite.config.js
+import glsl from 'vite-plugin-glsl';
+
+// 中略
+
+plugins:
+    [
+        restart({ restart: [ '../static/**', ] }), // Restart server on static file change
+        glsl() // Handle shader files
+    ],
+```
+
+
+
+

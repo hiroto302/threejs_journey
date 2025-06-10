@@ -1,6 +1,8 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import GUI from 'lil-gui'
+import testVertexShader from './test/vertex.glsl';
+import testFragmentShader from './test/fragment.glsl';
 
 /**
  * Base
@@ -27,7 +29,39 @@ const textureLoader = new THREE.TextureLoader()
 const geometry = new THREE.PlaneGeometry(1, 1, 32, 32)
 
 // Material
-const material = new THREE.MeshBasicMaterial()
+// const material = new THREE.MeshBasicMaterial()
+
+// NOTE: 以下を, vertex.glsl と fragment.glsl のファイルに分けて実装する
+// const material = new THREE.RawShaderMaterial({
+//     vertexShader:`
+//         uniform mat4 projectionMatrix;
+//         uniform mat4 viewMatrix;
+//         uniform mat4 modelMatrix;
+
+//         attribute vec3 position;
+
+//         void main()
+//         {
+//             gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
+//         }
+//     `,
+//     fragmentShader:`
+//         precision mediump float;
+
+//         void main()
+//         {
+//             gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+//         }
+//     `
+// })
+
+//POINT: シンプル!
+const material = new THREE.RawShaderMaterial({
+    vertexShader: testVertexShader,
+    fragmentShader: testFragmentShader,
+    wireframe: true
+})
+
 
 // Mesh
 const mesh = new THREE.Mesh(geometry, material)
