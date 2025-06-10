@@ -16,6 +16,16 @@ export default [
       'textures/environmentMap/pz.jpg', // 前
       'textures/environmentMap/nz.jpg'  // 後
     ]
+  },
+  // dirt texture (地面を表現するテクチャ)
+  {
+    name: 'grassColorTexture',
+    type: 'texture',
+    path: 'textures/dirt/color.jpg'
+  },
+  {
+    name: 'grassNormalTexture',
+    type: 'texture',
+    path: 'textures/dirt/normal.jpg'
   }
-  // 他のリソースを必要に応じて追加していく
 ]

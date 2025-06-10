@@ -29,10 +29,14 @@ import { Robot } from './Robot/Robot.js';
 import { FlyingRobot } from './Robot/FlyingRobot.js';
 
 const wallE = new Robot("Wall-E", 2)
-console.log(wallE.legs)
+// console.log(wallE.legs)
 
 const astroBoy = new FlyingRobot("Astro-Boy", 3)
 
+
+/**
+ * Experience: Module 化したクラスを利用して、従来の実装を改善する
+ */
 
 import Experience from './Experience/Experience.js';
 const experience = new Experience(document.querySelector('canvas.webgl'))

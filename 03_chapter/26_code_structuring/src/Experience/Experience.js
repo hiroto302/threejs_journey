@@ -7,8 +7,6 @@ import World from './World/World'
 import Resources from './Utils/Resources'
 import sources from './sources'
 
-console.log(sources)
-
 //NOTE: Singleton
 let instance = null
 
@@ -21,8 +19,6 @@ export default class Experience
       return instance
     }
     instance = this
-
-    console.log("Here starts a great experience")
 
     //NOTE: Global Access. コンソールに experience と打つと、クラスのインスタンス情報が見れる
     window.experience = this
