@@ -62,9 +62,9 @@ const material = new THREE.RawShaderMaterial({
     wireframe: true
 })
 
-
 // Mesh
 const mesh = new THREE.Mesh(geometry, material)
+console.log(mesh)
 scene.add(mesh)
 
 /**
