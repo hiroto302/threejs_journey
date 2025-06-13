@@ -14,18 +14,17 @@ attribute vec2 uv;
 varying float vRandom;
 varying vec2 vUv;
 
+varying float vElevation;
 
+
+// Title: 「Flag に影を！」
 void main()
 {
   vec4 modelPosition = modelMatrix * vec4(position, 1.0);
-  // Title: 「平面を凹凸化」
-  // modelPosition.z += aRandom * 0.1;
 
-
-// Title: 「Waves」
-  modelPosition.z += sin(modelPosition.x * uFrequency.x + uTime) * 0.1;
-  modelPosition.z += sin(modelPosition.y * uFrequency.y + uTime) * 0.1;
-
+  float elevation = sin(modelPosition.x * uFrequency.x + uTime) * 0.1;
+  elevation += sin(modelPosition.y * uFrequency.y + uTime) * 0.1;
+  modelPosition.z += elevation;
 
   vec4 viewPosition = viewMatrix * modelPosition;
   vec4 projectedPosition = projectionMatrix * viewPosition;
@@ -36,4 +35,5 @@ void main()
   vRandom = aRandom;
 
   vUv = uv;
+  vElevation = elevation;
 }

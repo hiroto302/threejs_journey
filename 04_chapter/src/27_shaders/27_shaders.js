@@ -4,7 +4,7 @@ import GUI from 'lil-gui'
 import testVertexShader from './test/vertex.glsl';
 import testFragmentShader from './test/fragment.glsl';
 
-import testVertexShader_flag from './test/vertex_flag.glsl'
+import testVertexShader_flag from './test/vertex_flag_variation.glsl'
 
 /**
  * Base
