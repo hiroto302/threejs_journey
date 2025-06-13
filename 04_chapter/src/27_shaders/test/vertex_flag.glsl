@@ -7,9 +7,13 @@ uniform float uTime;
 attribute vec3 position;
 // 27_shaders.js で追加した attribute を使用する
 attribute float aRandom;
+// Texture を展開するために必要なもの
+attribute vec2 uv;
 
 //NOTE varying : vertex shader から flagment shader へデータを受け渡すためのもの
 varying float vRandom;
+varying vec2 vUv;
+
 
 void main()
 {
@@ -29,4 +33,6 @@ void main()
 
   // フラグメントシェーダーに渡す値の決定
   vRandom = aRandom;
+
+  vUv = uv;
 }

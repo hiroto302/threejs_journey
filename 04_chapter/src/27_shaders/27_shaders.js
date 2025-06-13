@@ -23,6 +23,7 @@ const scene = new THREE.Scene()
  */
 
 const textureLoader = new THREE.TextureLoader()
+const flagTexture = textureLoader.load('/textures/flag-french.jpg')
 
 /**
  * Test mesh
@@ -82,7 +83,8 @@ const material = new THREE.RawShaderMaterial({
         uFrequency: { value: new THREE.Vector2(10, 5)},
         // tick()で更新させる値
         uTime: { value: 0},
-        uColor: { value: new THREE.Color('orange')}
+        uColor: { value: new THREE.Color('orange')},
+        uTexture: { value: flagTexture }
     }
 })
 
