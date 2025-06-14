@@ -5,6 +5,8 @@ import testVertexShader from './test/vertex.glsl';
 import testFragmentShader from './test/fragment.glsl';
 
 import testVertexShader_flag from './test/vertex_flag_variation.glsl'
+import testVertexShader_flag_final from './test/vertex_flag_final.glsl'
+
 
 /**
  * Base
@@ -72,8 +74,25 @@ console.log(geometry)
 // })
 
 //POINT: シンプル!
-const material = new THREE.RawShaderMaterial({
-    vertexShader: testVertexShader_flag,
+// const material = new THREE.RawShaderMaterial({
+//     vertexShader: testVertexShader_flag,
+//     fragmentShader: testFragmentShader,
+//     transparent: true,
+//     wireframe: true,
+//     // Title: 「Waves」のために uniforms を設定
+//     uniforms:
+//     {
+//         uFrequency: { value: new THREE.Vector2(10, 5)},
+//         // tick()で更新させる値
+//         uTime: { value: 0},
+//         uColor: { value: new THREE.Color('orange')},
+//         uTexture: { value: flagTexture }
+//     }
+// })
+
+//NOTE: ShaderMaterial の場合は、RawShaderMaterialと比較して必要ない uniform がある！
+const material = new THREE.ShaderMaterial({
+    vertexShader: testVertexShader_flag_final,
     fragmentShader: testFragmentShader,
     transparent: true,
     wireframe: true,
