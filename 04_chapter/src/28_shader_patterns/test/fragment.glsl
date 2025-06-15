@@ -520,9 +520,21 @@ void main()
     // float strength = sin(cnoise(vUv * 10.0) * 20.0);
     // gl_FragColor = vec4(strength, strength, strength, 1.0);
 
+
     // 50. Perlin noise の色々なパターン 3
     float strength = step(0.9, sin(cnoise(vUv * 5.0) * 20.0));
-    gl_FragColor = vec4(strength, strength, strength, 1.0);
+    // black color version
+    // gl_FragColor = vec4(strength, strength, strength, 1.0);
+
+    // Clamp the strength
+    // (パターン15とかで strength の値が 1.0 を超える時のための対応)
+    strength = clamp(strength, 0.0, 1.0);
+
+    // Color Version
+    vec3 blackColor = vec3(0.0);
+    vec3 uvColor = vec3(vUv, 1.0);;
+    vec3 mixedColor = mix(blackColor, uvColor, strength);
+    gl_FragColor = vec4(mixedColor, 1.0);
 
 
 
