@@ -92,6 +92,9 @@ smokeGeometry.scale(1.5, 6, 1.5)
 
 // Perlin texture
 const perlinTexture = textureLoader.load('./perlin.png')
+//Point: 煙のアニメーションで動かすのでリピートし忘れないこと
+perlinTexture.wrapS = THREE.RepeatWrapping
+perlinTexture.wrapT = THREE.RepeatWrapping
 
 // Material
 const smokeMaterial = new THREE.ShaderMaterial({
