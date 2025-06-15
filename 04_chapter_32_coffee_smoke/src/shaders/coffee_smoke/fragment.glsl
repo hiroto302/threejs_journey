@@ -27,6 +27,7 @@ void main()
 
   // Final Color
   gl_FragColor = vec4(vUv, 1.0, smoke);   // r・g・b の値を好きにして楽しもう!
+  gl_FragColor = vec4(1.0, 0, 0, 1.0);    // Debug用
 
 
   #include <tonemapping_fragment>
