@@ -99,6 +99,7 @@ const smokeMaterial = new THREE.ShaderMaterial({
     fragmentShader: coffeeSmokeFragmentShader,
     uniforms:
     {
+        uTime: new THREE.Uniform(0),
         // uPerlinTexture: { value: perlinTexture}
         uPerlinTexture: new THREE.Uniform(perlinTexture)
     },
@@ -120,6 +121,9 @@ const clock = new THREE.Clock()
 const tick = () =>
 {
     const elapsedTime = clock.getElapsedTime()
+
+    // Update smoke
+    smokeMaterial.uniforms.uTime.value = elapsedTime
 
     // Update controls
     controls.update()
