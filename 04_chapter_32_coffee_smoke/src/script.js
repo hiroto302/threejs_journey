@@ -108,6 +108,7 @@ const smokeMaterial = new THREE.ShaderMaterial({
     },
     side: THREE.DoubleSide,
     transparent: true,
+    depthWrite: false,      // 自身を occlude しないための設定 (depth buffer)
     // wireframe: true
 })
 
