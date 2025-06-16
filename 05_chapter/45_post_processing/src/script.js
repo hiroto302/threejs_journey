@@ -235,8 +235,92 @@ const TintShader = {
 }
 const tintPass = new ShaderPass(TintShader)
 tintPass.material.uniforms.uTint.value = new THREE.Vector3()
-effectComposer.addPass(tintPass)
-gui.add(tintPass.material.uniforms.uTint.value, 'x').min(-1).max(1).step(0.001)
+// effectComposer.addPass(tintPass)
+// gui.add(tintPass.material.uniforms.uTint.value, 'x').min(-1).max(1).step(0.001)
+
+
+// Displacement Pass
+// 波のように表示を変換
+const DisplacementShader1 = {
+    uniforms:
+    {
+        tDiffuse: { value: null },
+        uTime: { value: null}
+    },
+    vertexShader: `
+        varying vec2 vUv;
+
+        void main()
+        {
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            vUv = uv;
+        }
+    `,
+    fragmentShader: `
+        uniform sampler2D tDiffuse;
+        uniform float uTime;
+
+        varying vec2 vUv;
+
+        void main()
+        {
+            vec2 newUv = vec2(
+                vUv.x,
+                vUv.y + sin(vUv.x * 10. + uTime) * 0.1
+            );
+
+            vec4 color = texture2D(tDiffuse, newUv);
+            gl_FragColor = color;
+        }
+    `
+}
+const displacementPass1 = new ShaderPass(DisplacementShader1)
+displacementPass1.material.uniforms.uTime.value = 0
+// effectComposer.addPass(displacementPass)
+
+
+// Futuristic interface displacement : Texture を適用する
+const DisplacementShader2 = {
+    uniforms:
+    {
+        tDiffuse: { value: null },
+        uNormalMap: { value: null }
+    },
+    vertexShader: `
+        varying vec2 vUv;
+
+        void main()
+        {
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            vUv = uv;
+        }
+    `,
+    fragmentShader: `
+        uniform sampler2D tDiffuse;
+        uniform sampler2D uNormalMap;
+
+        varying vec2 vUv;
+
+        void main()
+        {
+            vec3 normalColor = texture2D(uNormalMap, vUv).xyz * 2.0 - 1.0;
+
+            vec2 newUv = vUv + normalColor.xy * 0.1;
+            vec4 color = texture2D(tDiffuse, newUv);
+
+            vec3 lightDirection = normalize(vec3(- 1.0, 1.0, 0.0));
+            float lightness = dot(normalColor, lightDirection);
+            lightness = clamp(lightness, 0.0, 1.0);
+
+            color.rgb += lightness * 2.0;
+
+            gl_FragColor = color;
+        }
+    `
+}
+const displacementPass2 = new ShaderPass(DisplacementShader2)
+displacementPass2.material.uniforms.uNormalMap.value = textureLoader.load('/textures/interfaceNormalMap.png')
+effectComposer.addPass(displacementPass2)
 
 
 // SMAA pass
@@ -256,6 +340,9 @@ const clock = new THREE.Clock()
 const tick = () =>
 {
     const elapsedTime = clock.getElapsedTime()
+
+    // Update passes
+    displacementPass1.material.uniforms.uTime.value = elapsedTime
 
     // Update controls
     controls.update()
