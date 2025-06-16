@@ -12,6 +12,7 @@ import { RGBShiftShader } from 'three/examples/jsm/shaders/RGBShiftShader.js'
 import { GammaCorrectionShader } from 'three/examples/jsm/shaders/GammaCorrectionShader.js'
 // アンチエイリアス (色々なのある。どれを使用するかはパフォーマンスが軽いとか考慮する)
 import { SMAAPass } from 'three/examples/jsm/postprocessing/SMAAPass.js'
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js'
 
 
 
@@ -184,8 +185,19 @@ effectComposer.addPass(rgbShiftPass)
 
 // Gamma Correction pass
 const gammaCorrectionPass = new ShaderPass(GammaCorrectionShader)
-gammaCorrectionPass.enabled = true
+gammaCorrectionPass.enabled = false
 effectComposer.addPass(gammaCorrectionPass)
+
+// UnrRealBloomPath
+const unrealBloomPass = new UnrealBloomPass()
+unrealBloomPass.strength = 0.3
+unrealBloomPass.radius = 1.0
+unrealBloomPass.threshold = 0.6
+effectComposer.addPass(unrealBloomPass)
+gui.add(unrealBloomPass, 'enabled')
+gui.add(unrealBloomPass, 'strength').min(0).max(2).step(0.001)
+gui.add(unrealBloomPass, 'radius').min(0).max(2).step(0.001)
+gui.add(unrealBloomPass, 'threshold').min(0).max(1).step(0.001)
 
 // SMAA pass
 // console.log(renderer.capabilities)
