@@ -145,9 +145,26 @@ renderer.toneMapping = THREE.ReinhardToneMapping
 renderer.toneMappingExposure = 1.5
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-// TODO: 結局これが必要なのかはっきりしなかった
-// EffectComposer が encoding をサポートしていない？
-renderer.outputColorSpace = THREE.SRGBColorSpace
+/* WARNING: EffectComposer を適用すると暗くなってしまった時の対処方法
+
+❌ 問題のあるパターン（二重処理）
+    renderer.outputColorSpace = THREE.SRGBColorSpace  // レンダラーでガンマ補正
+    ↓
+    EffectComposer  // 内部でも色空間処理
+    ↓
+    結果：二重にガンマ補正が適用され、暗くなる
+
+✅ 正しいパターン
+    renderer.outputColorSpace = デフォルト（Linear）  // 線形のまま
+    ↓
+    EffectComposer  // 適切な色空間処理
+    ↓
+    結果：正しい明度
+
+
+*/
+// Point: EffectComposerを使用するから、設定はデフォルトのままにする
+// renderer.outputColorSpace = THREE.SRGBColorSpace
 
 /**
  * Post Processing
@@ -163,8 +180,9 @@ const renderTarget = new THREE.WebGLRenderTarget(
 
 // Effect composer
 const effectComposer = new EffectComposer(renderer, renderTarget)
-effectComposer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 effectComposer.setSize(sizes.width, sizes.height)
+effectComposer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+
 
 const renderPass = new RenderPass(scene, camera)
 effectComposer.addPass(renderPass)
@@ -186,9 +204,9 @@ const rgbShiftPass = new ShaderPass(RGBShiftShader)
 rgbShiftPass.enabled = false
 effectComposer.addPass(rgbShiftPass)
 
-// Gamma Correction pass
+// Point:  Gamma Correction pass これは 必須 ！
 const gammaCorrectionPass = new ShaderPass(GammaCorrectionShader)
-gammaCorrectionPass.enabled = false
+gammaCorrectionPass.enabled = true
 effectComposer.addPass(gammaCorrectionPass)
 
 // UnrRealBloomPath
