@@ -3,13 +3,8 @@ uniform sampler2D uPerlinTexture;
 
 varying vec2 vUv;
 
-vec2 rotate2D(vec2 value, float angle)
-{
-  float s = sin(angle);
-  float c = cos(angle);
-  mat2 m = mat2(c, s, -s, c);
-  return m * value;
-}
+// rotate 関数の取得
+#include ../includes/rotate2D.glsl
 
 void main()
 {
