@@ -114,6 +114,10 @@ window.addEventListener('resize', () =>
     // Update renderer
     renderer.setSize(sizes.width, sizes.height)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+
+    // EffectComposer の更新
+    effectComposer.setSize(sizes.width, sizes.height)
+    effectComposer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 })
 
 /**
@@ -131,7 +135,6 @@ controls.enableDamping = true
 /**
  * Renderer
  */
-//TODO: 
 const renderer = new THREE.WebGLRenderer({
     canvas: canvas,
     antialias: true
@@ -193,11 +196,48 @@ const unrealBloomPass = new UnrealBloomPass()
 unrealBloomPass.strength = 0.3
 unrealBloomPass.radius = 1.0
 unrealBloomPass.threshold = 0.6
+unrealBloomPass.enabled = true
 effectComposer.addPass(unrealBloomPass)
 gui.add(unrealBloomPass, 'enabled')
 gui.add(unrealBloomPass, 'strength').min(0).max(2).step(0.001)
 gui.add(unrealBloomPass, 'radius').min(0).max(2).step(0.001)
 gui.add(unrealBloomPass, 'threshold').min(0).max(1).step(0.001)
+
+// Tint Pass
+const TintShader = {
+    uniforms:
+    {
+        tDiffuse: { value: null },
+        uTint: { value: new THREE.Vector3(0, 0, 0) }
+    },
+    vertexShader: `
+        varying vec2 vUv;
+
+        void main()
+        {
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            vUv = uv;
+        }
+    `,
+    fragmentShader: `
+        uniform sampler2D tDiffuse;
+        uniform vec3 uTint;
+
+        varying vec2 vUv;
+
+        void main()
+        {
+            vec4 color = texture2D(tDiffuse, vUv);
+            color.rgb += uTint;
+            gl_FragColor = color;
+        }
+    `
+}
+const tintPass = new ShaderPass(TintShader)
+tintPass.material.uniforms.uTint.value = new THREE.Vector3()
+effectComposer.addPass(tintPass)
+gui.add(tintPass.material.uniforms.uTint.value, 'x').min(-1).max(1).step(0.001)
+
 
 // SMAA pass
 // console.log(renderer.capabilities)
