@@ -12,6 +12,9 @@ const loadingManager = new THREE.LoadingManager(
     () =>
     {
         gsap.to(overlayMaterial.uniforms.uAlpha, { duration: 3, value: 0})
+        // ロード完了後、bar を消す
+        loadingBarElement.classList.add('ended')
+        loadingBarElement.style.transform = ''
     },
     // Progress
     (itemUrl, itemsLoaded, itemsTotal) =>
