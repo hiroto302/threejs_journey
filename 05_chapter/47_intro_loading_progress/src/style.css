@@ -17,3 +17,16 @@ body
     left: 0;
     outline: none;
 }
+
+.loading_bar
+{
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    height: 2px;
+    background: #ffffff;
+    /* この値を更新してloadingを再現 */
+    transform: scaleX(0);
+    /* 元のorigin は中央 */
+    transform-origin: top left;
+}
