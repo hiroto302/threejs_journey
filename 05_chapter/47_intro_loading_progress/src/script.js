@@ -11,10 +11,14 @@ const loadingManager = new THREE.LoadingManager(
     // Loaded
     () =>
     {
-        gsap.to(overlayMaterial.uniforms.uAlpha, { duration: 3, value: 0})
-        // ロード完了後、bar を消す
-        loadingBarElement.classList.add('ended')
-        loadingBarElement.style.transform = ''
+        gsap.delayedCall(0.5, () => {
+            gsap.to(overlayMaterial.uniforms.uAlpha, { duration: 3, value: 0})
+            // ロード完了後、bar を消す
+            loadingBarElement.classList.add('ended')
+            loadingBarElement.style.transform = ''
+        })
+        // window.setTimeout(() =>{
+        // })
     },
     // Progress
     (itemUrl, itemsLoaded, itemsTotal) =>
