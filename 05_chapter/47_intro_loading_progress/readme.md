@@ -13,4 +13,7 @@ npm run dev
 
 # Build for production in the dist/ directory
 npm run build
+
+# これも使用するよ
+npm install --save gsap@3.12 
 ```
