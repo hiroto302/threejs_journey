@@ -43,13 +43,15 @@ float型が使用可能
     min(a, b) :
         ２つの値の内小さい方を返す
 
-    floor(x) :
+    floor(x) : 切り捨て
         x が 0.8 の時は、0を返す
-        x が 1.2 の時は、1.2を返す
+        x が 1.2 の時は、1.0を返す
+        x が -0.2 の時は、-1.0を返す
 
-    round(x) :
+    round(x) : 四捨五入
         x が 0.8 の時は、1.0を返す
-        x が 1.2 の時は、1.2を返す
+        x が 1.2 の時は、1.0を返す
+        x が -0.2 の時は、0.0を返す
 
     length(vec2(x, y)) = sqrt(x*x + y*y) :
         つまり、原点(0,0)からの距離（ユークリッド距離）を計算をする
@@ -144,6 +146,7 @@ void main()
 {
     // 1. uv map の位置に応じて各頂点の色を変化
     // gl_FragColor = vec4(vUv.x, vUv.y, 1.0, 1.0);
+    // gl_FragColor = vec4(vUv.x, vUv.y, 1.0, 1.0);
 
     /* NOTE: 実際の表示される時の注意点
         Three.jsの内部処理では左上が(0,0)
@@ -187,14 +190,14 @@ void main()
     // 7: 格子点 (縦と横が重なっている箇所のみ表示)
     // float shutterGrid = 10.0;
     // float space = 0.8;
-        // step関数の結果：
-        // strengthXは、X軸方向の特定の位置で 1.0（白）、それ以外で 0.0（黒）
-        // strengthYは、Y軸方向の特定の位置で 1.0（白）、それ以外で 0.0（黒）
+    //     // step関数の結果：
+    //     // strengthXは、X軸方向の特定の位置で 1.0（白）、それ以外で 0.0（黒）
+    //     // strengthYは、Y軸方向の特定の位置で 1.0（白）、それ以外で 0.0（黒）
     // float strengthX = step(space, mod(vUv.x * shutterGrid, 1.0));
     // float strengthY = step(space, mod(vUv.y * shutterGrid, 1.0));
-        // 乗算の結果 :
-        // strengthX と strengthY 同士の値が1同士の時のみ 1。それ以外の計算は 1*0, 0*1, 0*0 のような結果で 0。
-        // なので重なっている箇所のみ表示される。
+    //     // 乗算の結果 :
+    //     // strengthX と strengthY 同士の値が1同士の時のみ 1。それ以外の計算は 1*0, 0*1, 0*0 のような結果で 0。
+    //     // なので重なっている箇所のみ表示される。
     // float combination = strengthX * strengthY;
     // gl_FragColor = vec4(combination, combination, combination, 1.0);
 
@@ -408,11 +411,11 @@ void main()
     // gl_FragColor = vec4(strength, strength, strength, 1.0);
 
     // 35. 真ん中のその周りが黒色になるはっきり区別されるやつ(33の発展系)
-    // float strength = step(0.01,abs(distance(vUv, vec2(0.5)) - 0.25));
+    // float strength = step(0.01, abs(distance(vUv, vec2(0.5)) - 0.25));
     // gl_FragColor = vec4(strength, strength, strength, 1.0);
 
     // 36. 白黒を反転したやつ (35の発展系)
-    // float strength = 1.0 - step(0.01,abs(distance(vUv, vec2(0.5)) - 0.25));
+    // float strength = 1.0 - step(0.01, abs(distance(vUv, vec2(0.5)) - 0.25));
     // gl_FragColor = vec4(strength, strength, strength, 1.0);
 
     // 37. ぐにゃぐにゃするやつ (36の発展系)
@@ -420,7 +423,7 @@ void main()
     //     vUv.x,
     //     vUv.y + sin(vUv.x * 100.0) * 0.1    // 縦方向にsin波を連続で反映させる
     // );
-    // float strength = 1.0 - step(0.01,abs(distance(wavedUv, vec2(0.5)) - 0.25));
+    // float strength = 1.0 - step(0.01, abs(distance(wavedUv, vec2(0.5)) - 0.25));
     // gl_FragColor = vec4(strength, strength, strength, 1.0);
 
     // 38. 縦にも横にもぐにゃぐにゃさせる アメーバなやつ (37の発展系)
@@ -535,12 +538,5 @@ void main()
     vec3 uvColor = vec3(vUv, 1.0);;
     vec3 mixedColor = mix(blackColor, uvColor, strength);
     gl_FragColor = vec4(mixedColor, 1.0);
-
-
-
-
-
-
-
 
 }
