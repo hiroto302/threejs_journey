@@ -1,4 +1,5 @@
 import './style.css'
+import App from './App.js'
 import { createRoot } from 'react-dom/client'
 
 
@@ -26,5 +27,7 @@ root.render(
         <h3 className='cute-paragraph' style={{ color: 'red', fontSize: '20px' }}>
             color style
         </h3>
+
+        <App />
     </>
 )
