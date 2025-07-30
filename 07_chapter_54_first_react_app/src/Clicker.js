@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function Clicker()
 {
@@ -6,18 +6,27 @@ export default function Clicker()
   // const count = countState[0];
   // const setCount = countState[1];
   // or
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(parseInt(localStorage.getItem('count') ?? 0));
+
+
+  useEffect(() => {
+    // console.log('first render');
+    // console.log('first count', count);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('count', count);
+  }, [count]);
 
 
   const buttonClick = () => {
 
-    window.setTimeout(() => {
-      console.log('Timeout');
-      setCount(count + 1);
-      // setCount(value => value + 1);
-    }, 0);
+    // window.setTimeout(() => {
+    // }, 0);
 
-    // console.log(countState);
+    setCount(count + 1);
+    // console.log('update count', count);
+    // setCount(value => value + 1);
   }
 
 
