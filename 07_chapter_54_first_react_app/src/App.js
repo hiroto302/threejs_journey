@@ -1,4 +1,5 @@
 import './style.css'
+import Clicker from './Clicker.js'
 
 export default function App() {
   const subStyle = {
@@ -9,6 +10,7 @@ export default function App() {
   return (
     <>
       <h1>My First React App</h1>
+      <Clicker />
 
       <h2 style={subStyle}>
         {subStyle.color} {subStyle.fontSize}
