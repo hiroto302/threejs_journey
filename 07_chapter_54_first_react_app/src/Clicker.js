@@ -10,8 +10,14 @@ export default function Clicker()
 
 
   useEffect(() => {
-    // console.log('first render');
+    console.log('first render');
     // console.log('first count', count);
+
+    return () => {
+      console.log('dispose clicker component');
+      localStorage.removeItem('count');
+      console.log('cleanup count', count);
+    }
   }, []);
 
   useEffect(() => {

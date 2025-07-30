@@ -1,5 +1,6 @@
 import './style.css'
 import Clicker from './Clicker.js'
+import { useState } from 'react';
 
 export default function App() {
   const subStyle = {
@@ -7,10 +8,18 @@ export default function App() {
     fontSize: '30px',
   };
 
+  const [hasClicker, setHasClicker] = useState(true);
+
+  const toggleClickerClick = () => {
+    setHasClicker(!hasClicker);
+  }
+
   return (
     <>
-      <h1>My First React App</h1>
-      <Clicker />
+      <button onClick={toggleClickerClick}>{ hasClicker ? 'Hide':'Show'} Clicker</button>
+
+      {/* { hasClicker ? <Clicker /> : null} */}
+      { hasClicker && <Clicker /> }
 
       <h2 style={subStyle}>
         {subStyle.color} {subStyle.fontSize}
