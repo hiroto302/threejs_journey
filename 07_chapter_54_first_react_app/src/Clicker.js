@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 // export default function Clicker(props)
-export default function Clicker( {keyName, color = "darkOrchid"} )
+export default function Clicker( { increment, keyName, color = "darkOrchid"} )
 {
   //NOTE: props is an object that contains all the properties passed to this component
   // const keyName = props.keyName;
@@ -39,6 +39,8 @@ export default function Clicker( {keyName, color = "darkOrchid"} )
     setCount(count + 1);
     // console.log('update count', count);
     // setCount(value => value + 1);
+
+    increment()
   }
 
 

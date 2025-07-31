@@ -9,24 +9,30 @@ export default function App( { children}) {
   };
 
   const [hasClicker, setHasClicker] = useState(true);
+  const [count, setCount] = useState(0);
 
   const toggleClickerClick = () => {
     setHasClicker(!hasClicker);
   }
 
+  const increment = () => {
+    setCount(count + 1);
+  }
 
   return (
     <>
       { children }
+
+      <div>Total count: { count }</div>
 
       <button onClick={toggleClickerClick}>{ hasClicker ? 'Hide':'Show'} Clicker</button>
       <h4>Clickers</h4>
 
       {/* { hasClicker ? <Clicker /> : null} */}
       { hasClicker && <>
-        <Clicker keyName="countA" color="crimson"/>
-        <Clicker keyName="countB" color={ `hsl(${Math.random() * 360}deg, 100%, 70%)`}/>
-        <Clicker keyName="countC"/>
+        <Clicker increment={ increment } keyName="countA" color="crimson"/>
+        <Clicker increment={ increment } keyName="countB" color={ `hsl(${Math.random() * 360}deg, 100%, 70%)`}/>
+        <Clicker increment={ increment } keyName="countC"/>
       </> }
 
       <h2 style={subStyle}>
