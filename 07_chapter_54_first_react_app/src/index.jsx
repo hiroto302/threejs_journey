@@ -11,7 +11,7 @@ const subStyle = "sub-style"
 
 root.render(
     <>
-        <h1 className='title' style={{'backgroundColor': 'floralwhite', 'color': 'coral'}}>
+        {/* <h1 className='title' style={{'backgroundColor': 'floralwhite', 'color': 'coral'}}>
             Hello { `datetime is ${Date.now()}`} <br />
             { <em> {stringJSX} </em> } <br />
             Are you ok? { boolJSX ? 'Yes' : 'No' }
@@ -26,8 +26,13 @@ root.render(
 
         <h3 className='cute-paragraph' style={{ color: 'red', fontSize: '20px' }}>
             color style
-        </h3>
+        </h3> */}
 
-        <App />
+        <App children={
+            <>
+                <h1>My First React App</h1>
+                <h2>Sub Title</h2>
+            </>
+        } />
     </>
 )

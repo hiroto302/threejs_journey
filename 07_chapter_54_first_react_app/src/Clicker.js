@@ -1,27 +1,33 @@
 import { useState, useEffect } from 'react';
 
-export default function Clicker()
+// export default function Clicker(props)
+export default function Clicker( {keyName, color = "darkOrchid"} )
 {
+  //NOTE: props is an object that contains all the properties passed to this component
+  // const keyName = props.keyName;
+  // console.log('Clicker component created', keyName);
+
+
   // const countState = useState(0);
   // const count = countState[0];
   // const setCount = countState[1];
   // or
-  const [count, setCount] = useState(parseInt(localStorage.getItem('count') ?? 0));
+  const [count, setCount] = useState(parseInt(localStorage.getItem(keyName) ?? 0));
 
 
   useEffect(() => {
-    console.log('first render');
+    // console.log('first render');
     // console.log('first count', count);
 
     return () => {
       console.log('dispose clicker component');
-      localStorage.removeItem('count');
+      localStorage.removeItem(keyName);
       console.log('cleanup count', count);
     }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('count', count);
+    localStorage.setItem(keyName, count);
   }, [count]);
 
 
@@ -37,8 +43,7 @@ export default function Clicker()
 
 
   return <div>
-    <h2>Clicker</h2>
-    <div>Clicks count : {count}</div>
+    <div style={ { color } }>Clicks count : {count}</div>
     <button onClick={ buttonClick }>Click me!</button>
   </div>
 }

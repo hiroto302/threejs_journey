@@ -2,7 +2,7 @@ import './style.css'
 import Clicker from './Clicker.js'
 import { useState } from 'react';
 
-export default function App() {
+export default function App( { children}) {
   const subStyle = {
     color: 'blue',
     fontSize: '30px',
@@ -14,12 +14,20 @@ export default function App() {
     setHasClicker(!hasClicker);
   }
 
+
   return (
     <>
+      { children }
+
       <button onClick={toggleClickerClick}>{ hasClicker ? 'Hide':'Show'} Clicker</button>
+      <h4>Clickers</h4>
 
       {/* { hasClicker ? <Clicker /> : null} */}
-      { hasClicker && <Clicker /> }
+      { hasClicker && <>
+        <Clicker keyName="countA" color="crimson"/>
+        <Clicker keyName="countB" color={ `hsl(${Math.random() * 360}deg, 100%, 70%)`}/>
+        <Clicker keyName="countC"/>
+      </> }
 
       <h2 style={subStyle}>
         {subStyle.color} {subStyle.fontSize}
