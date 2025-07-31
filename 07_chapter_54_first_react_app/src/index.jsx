@@ -28,7 +28,7 @@ root.render(
             color style
         </h3> */}
 
-        <App children={
+        <App clickersCount={4} children={
             <>
                 <h1>My First React App</h1>
                 <h2>Sub Title</h2>

@@ -20,9 +20,9 @@ export default function Clicker( { increment, keyName, color = "darkOrchid"} )
     // console.log('first count', count);
 
     return () => {
-      console.log('dispose clicker component');
+      // console.log('dispose clicker component');
       localStorage.removeItem(keyName);
-      console.log('cleanup count', count);
+      // console.log('cleanup count', count);
     }
   }, []);
 
