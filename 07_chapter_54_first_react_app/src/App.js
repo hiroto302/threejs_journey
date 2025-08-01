@@ -1,5 +1,6 @@
 import './style.css'
 import Clicker from './Clicker.js'
+import People from './People.js';
 
 // NOTE: Hooks
 // useMemo: 計算結果をメモ化（キャッシュ)。重い計算や処理を毎回実行するのではなく、依存関係に変化がない限り前回の結果を再利用する。
@@ -45,7 +46,6 @@ export default function App( { clickersCount, children}) {
     for (let i = 0; i < clickersCount; i++) {
       colors.push(`hsl(${Math.random() * 360}deg, 100%, 70%)`);
     }
-    console.log("colors が呼ばれたよ！use memo")
     return colors;
   }, [clickersCount]);
 
@@ -54,6 +54,8 @@ export default function App( { clickersCount, children}) {
   return (
     <>
       { children }
+
+      <People />
 
       <div>Total count: { count }</div>
 
