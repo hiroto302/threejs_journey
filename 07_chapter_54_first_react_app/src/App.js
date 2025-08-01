@@ -1,6 +1,16 @@
 import './style.css'
 import Clicker from './Clicker.js'
-import { useState } from 'react';
+
+// NOTE: Hooks
+// useMemo: 計算結果をメモ化（キャッシュ)。重い計算や処理を毎回実行するのではなく、依存関係に変化がない限り前回の結果を再利用する。
+import { useState, useMemo } from 'react';
+
+//NOTE: The colors array is used to assign different colors to each Clicker component
+// Appコンポーネントが更新されても、Clickerコンポーネントの色が変わらないようにするために、クラス外で定義
+const colorsOutside = [
+  `hsl(${Math.random() * 360}deg, 100%, 70%)`,
+  `hsl(${Math.random() * 360}deg, 100%, 70%)`
+]
 
 export default function App( { clickersCount, children}) {
   const subStyle = {
@@ -27,6 +37,20 @@ export default function App( { clickersCount, children}) {
   // })
 
 
+  // NOTE: useMemo is used to memoize the colors array so that it is only recalculated when clickersCount changes
+  // colorsOutsideはクラス外で定義されているが、useMemoを使うことで、Appコンポーネントが更新されても色が変わらないようにすることも可能
+  const colors = useMemo(() =>
+  {
+    const colors = [];
+    for (let i = 0; i < clickersCount; i++) {
+      colors.push(`hsl(${Math.random() * 360}deg, 100%, 70%)`);
+    }
+    console.log("colors が呼ばれたよ！use memo")
+    return colors;
+  }, [clickersCount]);
+
+
+
   return (
     <>
       { children }
@@ -49,7 +73,7 @@ export default function App( { clickersCount, children}) {
             key={index}
             increment={ increment }
             keyName={`count${index}`}
-            color={ `hsl(${Math.random() * 360}deg, 100%, 70%)`}/>
+            color={ colors[index]}/>
         )}
       </> }
 
