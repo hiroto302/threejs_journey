@@ -1,18 +1,25 @@
-import { useFrame } from '@react-three/fiber';
+import { useFrame, extend, useThree } from '@react-three/fiber';
 import { useRef } from 'react';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+
+extend({ OrbitControls });
 
 export default function Experience() {
+
+    const { camera, gl } = useThree();
 
     const cubeRef = useRef();
     const groupRef = useRef();
 
     useFrame((state, delta) =>{
+        // console.log(state);
         cubeRef.current.rotation.y += delta;
-        groupRef.current.rotation.y += delta;
+        // groupRef.current.rotation.y += delta;
     })
 
     return (
         <>
+            <orbitControls args={[camera, gl.domElement]} />
             {/* <mesh >
                 <boxGeometry args={[1, 1, 1]} />
                 <meshBasicMaterial color="red" />s
