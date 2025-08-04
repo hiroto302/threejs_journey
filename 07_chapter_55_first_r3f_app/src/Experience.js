@@ -1,3 +1,5 @@
+import { Wireframe } from "three/examples/jsm/Addons.js";
+
 export default function Experience() {
     return (
         <>
@@ -9,9 +11,11 @@ export default function Experience() {
                 <torusGeometry />
                 <meshNormalMaterial />
             </mesh> */}
-            <mesh>
-              <sphereGeometry />
-              <meshBasicMaterial color="blue" />
+            <mesh position-x={1} rotation-y={Math.PI * 0.23} scale={1.5}>
+              {/* <sphereGeometry args={[1.5, 32, 32]} /> */}
+              <boxGeometry />
+              {/* <meshBasicMaterial args={[{color: 'red', wireframe: true}]} /> */}
+              <meshBasicMaterial color='red' wireframe={true} />
             </mesh>
         </>
     );
