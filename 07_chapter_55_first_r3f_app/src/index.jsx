@@ -14,10 +14,21 @@ const root = ReactDOM.createRoot(document.querySelector('#root'))
 // mesh.material = new THREE.MeshBasicMaterial({ color: red })
 // scene.add(mesh)
 
+const cameraSettings = {
+    fov: 45,
+    near: 0.1,
+    far: 200,
+    position: [3, 2, 6],
+    // zoom: 50 // Uncomment for orthographic camera
+}
+
 //NOTE: React Three Fiber example
 root.render(
     <>
-        <Canvas>
+        <Canvas
+            // orthographic
+            camera={ cameraSettings}
+        >
             <Experience />
         </Canvas>
     </>
