@@ -1,8 +1,10 @@
 import './style.css'
 import ReactDOM from 'react-dom/client'
 import * as THREE from 'three'
+import { CineonToneMapping } from 'three'
 import { Canvas } from '@react-three/fiber'
 import Experience from './Experience'
+import { toneMapping } from 'three/tsl'
 
 const root = ReactDOM.createRoot(document.querySelector('#root'))
 
@@ -26,6 +28,16 @@ const cameraSettings = {
 root.render(
     <>
         <Canvas
+            //NOTE: toneMapping default is THREE.ACESFilmicToneMapping. 色々なパターンがあるので試してみると良い。
+            // flat
+            //NOTE: gl = WebGLRenderer
+            gl={{
+                antialias: true,
+                // toneMapping: CineonToneMapping
+                toneMapping: THREE.ACESFilmicToneMapping,
+                outputColorSpace: THREE.SRGBColorSpace,
+            }}
+
             // orthographic
             camera={ cameraSettings}
         >
