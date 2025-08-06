@@ -1,4 +1,5 @@
 import {
+    Html,
     PivotControls,
     TransformControls,
     OrbitControls } from "@react-three/drei"
@@ -8,6 +9,7 @@ import { useRef } from 'react'
 export default function Experience()
 {
     const cube = useRef()
+    const sphere = useRef()
 
     return <>
         <OrbitControls enableDamping={false} makeDefault />
@@ -22,9 +24,19 @@ export default function Experience()
             scale={ 50 }
             fixed={ true }
         >
-            <mesh position-x={ - 2 }>
+            <mesh ref={ sphere} position-x={ - 2 }>
                 <sphereGeometry />
                 <meshStandardMaterial color="orange" />
+                <Html
+                    position={ [1, 1.2, 0]}
+                    wrapperClass="label" // 親要素にlabelクラスを適用
+                    center
+                    distanceFactor={ 6 }
+                    occlude={ [cube, sphere] }
+                >
+                {/* 以下の要素が div に配置される */}
+                    OrangeSphere
+                </Html>
             </mesh>
         </PivotControls>
 
@@ -38,6 +50,5 @@ export default function Experience()
             <planeGeometry />
             <meshStandardMaterial color="greenyellow" />
         </mesh>
-
     </>
 }
