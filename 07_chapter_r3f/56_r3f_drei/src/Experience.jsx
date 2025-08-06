@@ -1,4 +1,7 @@
 import {
+    MeshReflectorMaterial,
+    Float,
+    Text,
     Html,
     PivotControls,
     TransformControls,
@@ -49,6 +52,30 @@ export default function Experience()
         <mesh position-y={ - 1 } rotation-x={ - Math.PI * 0.5 } scale={ 10 }>
             <planeGeometry />
             <meshStandardMaterial color="greenyellow" />
+            <MeshReflectorMaterial
+                resolution={ 512 }
+                blur={ [1000, 1000 ] }
+                mixBlur={ 1 }
+                mirror={ 0.8 }
+                color= "greenYellow"
+            />
         </mesh>
+
+        <Float
+            speed={ 1.5 }
+            rotationIntensity={ 0.5 }
+            floatIntensity={ 2 }
+        >
+            <Text
+                font="/bangers-v20-latin-regular.woff"
+                fontSize={ 1 }
+                color='salmon'
+                position={ [ 0, 2, 0 ] }
+                maxWidth={ 2 }
+                textAlign='center'
+            >
+                I LOVE R3F
+            </Text>
+        </Float>
     </>
 }
