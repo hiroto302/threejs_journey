@@ -4,6 +4,7 @@ import { Canvas } from '@react-three/fiber'
 import Experience from './Experience.jsx'
 import { StrictMode } from 'react'
 
+
 const root = ReactDOM.createRoot(document.querySelector('#root'))
 
 root.render(
