@@ -1,11 +1,11 @@
 import { OrbitControls } from '@react-three/drei'
 import Cube from './Cube.js'
-import { useControls } from 'leva'
+import { useControls, button } from 'leva'
 
 
 export default function Experience()
 {
-    const { x, y } = useControls({
+    const sphereOptions = useControls("sphere",{
         x: {
             value: -2,
             min: -5,
@@ -20,7 +20,7 @@ export default function Experience()
         }
     })
 
-    const { position, color, visible } = useControls({
+    const { position, color, visible, cubeScale } = useControls("cube",{
         position: {
             value: { x: 2, y: 0},
             step: 0.01,
@@ -28,6 +28,22 @@ export default function Experience()
         },
         color: '#ff0000',
         visible: true,
+        myInterval: {
+            min: 0,
+            max: 10,
+            value: [ 4, 5]
+        },
+        clickMe: button(() =>
+        {
+            console.log('Button clicked!')
+        }),
+        choice: {options: ['A', 'B', 'C'], value: 'A'},
+        cubeScale: {
+            value: 1.5,
+            min: 0.1,
+            max: 5,
+            step: 0.01,
+        }
     })
     // console.log(controls)
 
@@ -39,12 +55,12 @@ export default function Experience()
         <directionalLight position={ [ 1, 2, 3 ] } intensity={ 4.5 } />
         <ambientLight intensity={ 1.5 } />
 
-        <mesh position-x={ x } position-y={ y } >
+        <mesh position-x={ sphereOptions.x } position-y={ sphereOptions.y } >
             <sphereGeometry />
             <meshStandardMaterial color="orange" />
         </mesh>
 
-        <mesh position={ [position.x, position.y, 0] } scale={ 1.5 } visible={ visible }>
+        <mesh position={ [position.x, position.y, 0] } scale={ cubeScale } visible={ visible }>
             <boxGeometry />
             <meshStandardMaterial color={ color } />
         </mesh>
