@@ -1,8 +1,9 @@
 import { useFrame } from '@react-three/fiber'
-import { RandomizedLight ,AccumulativeShadows, SoftShadows ,BakeShadows, OrbitControls, useHelper } from '@react-three/drei'
+import { ContactShadows , RandomizedLight ,AccumulativeShadows, SoftShadows ,BakeShadows, OrbitControls, useHelper } from '@react-three/drei'
 import { useRef } from 'react'
 import { Perf } from 'r3f-perf'
 import * as THREE from 'three'
+import { useControls } from 'leva'
 
 export default function Experience()
 {
@@ -13,12 +14,14 @@ export default function Experience()
     useFrame((state, delta) =>
     {
         cube.current.rotation.y += delta * 0.2
+        // const time = state.clock.getElapsedTime()
+        // cube.current.position.x = 2 + Math.sin(time)
     })
 
-    useFrame((state, delta) =>
-    {
-       const time = state.clock.getElapsedTime()
-       cube.current.position.x = 2 + Math.sin(time)
+    const { color, opacity, blur } = useControls('contact shadows', {
+        color: '#b9cb25',
+        opacity: { value: 0.77, min: 0, max: 1, step: 0.01 },
+        blur: { value: 1.47, min: 0, max: 10, step: 0.01 }
     })
 
     return <>
@@ -33,7 +36,7 @@ export default function Experience()
 
         <OrbitControls makeDefault />
 
-        <AccumulativeShadows
+        {/* <AccumulativeShadows
             position={ [ 0, - 0.99, 0 ] }
             scale={ 10 }
             color="#316d39"
@@ -50,7 +53,18 @@ export default function Experience()
                 position={ [ 1, 2, 3 ] }
                 bias={ 0.001 }
             />
-        </AccumulativeShadows>
+        </AccumulativeShadows> */}
+
+        <ContactShadows
+            position={ [ 0, -0.99, 0]}
+            scale={ 10 }
+            resolution={ 512 }
+            far={ 5 }
+            color={ color }
+            opacity={ opacity }
+            blur={ blur }
+            frames={ 1 }
+        />
 
         <directionalLight
             ref={ directionalLight }
@@ -78,7 +92,7 @@ export default function Experience()
         </mesh>
 
         <mesh position-y={ - 1 } rotation-x={ - Math.PI * 0.5 } scale={ 10 }>
-        {/* <mesh receiveShadow position-y={ - 1 } rotation-x={ - Math.PI * 0.5 } scale={ 10 }> */}
+        {/* <mesh receiveShadow position- y={ - 1 } rotation-x={ - Math.PI * 0.5 } scale={ 10 }> */}
 
             <planeGeometry />
             <meshStandardMaterial color="greenyellow" />
