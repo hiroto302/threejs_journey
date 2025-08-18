@@ -1,6 +1,6 @@
-import { useFrame } from '@react-three/fiber'
-import { Sky ,ContactShadows ,RandomizedLight ,AccumulativeShadows , SoftShadows ,BakeShadows , OrbitControls, useHelper } from '@react-three/drei'
-import { useRef } from 'react'
+import { useThree ,useFrame } from '@react-three/fiber'
+import { Environment ,Sky ,ContactShadows ,RandomizedLight ,AccumulativeShadows , SoftShadows ,BakeShadows , OrbitControls, useHelper } from '@react-three/drei'
+import { useEffect ,useRef } from 'react'
 import { Perf } from 'r3f-perf'
 import * as THREE from 'three'
 import { useControls } from 'leva'
@@ -29,7 +29,30 @@ export default function Experience()
         sunIntensity: { value: 4.5, min: 0, max: 10, step: 0.01 }
     })
 
+    const { envMapIntensity } = useControls('environment map', {
+        envMapIntensity: { value: 1, min: 0, max: 10}
+    })
+
+    const scene = useThree((state) => state.scene)
+    useEffect(() =>
+    {
+        scene.environmentIntensity = envMapIntensity
+    }, [ envMapIntensity ])
+
     return <>
+
+        {/* 'https://threejs.org/examples/textures/equirectangular/venice_sunset_1k.hdr', この hdr試してみたい */}
+        <Environment
+            background={ true }
+            files={ [
+                './environmentMaps/2/px.jpg',
+                './environmentMaps/2/nx.jpg',
+                './environmentMaps/2/py.jpg',
+                './environmentMaps/2/ny.jpg',
+                './environmentMaps/2/pz.jpg',
+                './environmentMaps/2/nz.jpg',
+            ]}
+        />
 
         {/* <BakeShadows /> */}
         {/* frustum={3.75} near={9.5} rings={11} はデフォルト値が反映されているよ */}
@@ -71,7 +94,8 @@ export default function Experience()
             frames={ 1 }
         />
 
-        <directionalLight
+        {/* NOTE: Environment Map を使うので以下をコメントアウト */}
+        {/* <directionalLight
             ref={ directionalLight }
             position={ sunPosition }
             intensity={ 4.5 }
@@ -83,10 +107,12 @@ export default function Experience()
             // shadow-camera-left={ - 200 }
             // shadow-camera-right={ 200 }
             // shadow-camera-bottom={ -200 }
-        />
-        <ambientLight intensity={ 1.5 } />
+        /> */}
+        {/* <ambientLight intensity={ 1.5 } /> */}
 
-        <Sky sunPosition={ sunPosition }/>
+        {/* <Sky sunPosition={ sunPosition }/> */}
+
+        
 
         <mesh castShadow position-x={ - 2 }>
             <sphereGeometry />
