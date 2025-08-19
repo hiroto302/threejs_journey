@@ -44,14 +44,16 @@ export default function Experience()
         {/* 'https://threejs.org/examples/textures/equirectangular/venice_sunset_1k.hdr', この hdr試してみたい */}
         <Environment
             background={ true }
-            files={ [
-                './environmentMaps/2/px.jpg',
-                './environmentMaps/2/nx.jpg',
-                './environmentMaps/2/py.jpg',
-                './environmentMaps/2/ny.jpg',
-                './environmentMaps/2/pz.jpg',
-                './environmentMaps/2/nz.jpg',
-            ]}
+            // files={ [
+            //     './environmentMaps/2/px.jpg',
+            //     './environmentMaps/2/nx.jpg',
+            //     './environmentMaps/2/py.jpg',
+            //     './environmentMaps/2/ny.jpg',
+            //     './environmentMaps/2/pz.jpg',
+            //     './environmentMaps/2/nz.jpg',
+            // ]}
+            // files={ './environmentMaps/the_sky_is_on_fire_2k.hdr' }
+            preset='night'
         />
 
         {/* <BakeShadows /> */}
