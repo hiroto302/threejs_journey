@@ -1,5 +1,5 @@
 import { useThree ,useFrame } from '@react-three/fiber'
-import { Environment ,Sky ,ContactShadows ,RandomizedLight ,AccumulativeShadows , SoftShadows ,BakeShadows , OrbitControls, useHelper } from '@react-three/drei'
+import { Lightformer ,Environment ,Sky ,ContactShadows ,RandomizedLight ,AccumulativeShadows , SoftShadows ,BakeShadows , OrbitControls, useHelper } from '@react-three/drei'
 import { useEffect ,useRef } from 'react'
 import { Perf } from 'r3f-perf'
 import * as THREE from 'three'
@@ -53,8 +53,24 @@ export default function Experience()
             //     './environmentMaps/2/nz.jpg',
             // ]}
             // files={ './environmentMaps/the_sky_is_on_fire_2k.hdr' }
-            preset='night'
-        />
+            preset='sunset'
+            // resolution={ 32 }
+        >
+
+            <color args={ ['#000000'] } attach="background" />
+            <Lightformer
+                position-z={ -5 }
+                scale={ 10 }
+                color='red'
+                intensity={ 2 }
+                form='ring'
+            />
+            {/* NOTE: EnvMap として Bright する Plane を作成 Lightformer を上記のように利用すればOK*/}
+            {/* <mesh position-z={ -5 } scale={ 10}>
+                <planeGeometry />
+                <meshBasicMaterial color={ [1, 0, 0]} />
+            </mesh> */}
+        </Environment>
 
         {/* <BakeShadows /> */}
         {/* frustum={3.75} near={9.5} rings={11} はデフォルト値が反映されているよ */}
