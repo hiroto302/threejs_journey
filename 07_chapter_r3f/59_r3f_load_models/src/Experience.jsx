@@ -1,10 +1,28 @@
 import { OrbitControls } from '@react-three/drei'
 import { Perf } from 'r3f-perf'
+import { useLoader } from '@react-three/fiber'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
+import Model from './Model.js'
 
 export default function Experience()
 {
-    return <>
+    const model = useLoader(
+        GLTFLoader,
+        // '/hamburger.glb',
+        // '/hamburger-draco.glb',
+        './FlightHelmet/glTF/FlightHelmet.gltf',
 
+        (loader) =>
+        {
+            const dracoLoader = new DRACOLoader()
+            dracoLoader.setDecoderPath('/draco/')
+            loader.setDRACOLoader(dracoLoader)
+        }
+    )
+
+
+    return <>
         <Perf position="top-left" />
 
         <OrbitControls makeDefault />
@@ -17,5 +35,8 @@ export default function Experience()
             <meshStandardMaterial color="greenyellow" />
         </mesh>
 
+        <primitive object={ model.scene } scale={ 5 } position-y={-1} />
+
+        <Model />
     </>
 }
