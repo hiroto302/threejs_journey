@@ -3,6 +3,7 @@ import { Perf } from 'r3f-perf'
 import { Suspense } from 'react'
 import Model from './Model.js'
 import Placeholder  from './Placeholder.js'
+import Hamburger from './Hamburger.js'
 
 export default function Experience()
 {
@@ -13,7 +14,8 @@ export default function Experience()
 
         <OrbitControls makeDefault />
 
-        <directionalLight castShadow position={ [ 1, 2, 3 ] } intensity={ 4.5 } />
+        {/* shadow-normalBia　s for Shadow acne (ハンバーガーの影のアクネを防ぐための設定) */}
+        <directionalLight castShadow position={ [ 1, 2, 3 ] } intensity={ 4.5 } shadow-normalBias= { 0.04 } />
         <ambientLight intensity={ 1.5 } />
 
         <mesh receiveShadow position-y={ - 1 } rotation-x={ - Math.PI * 0.5 } scale={ 10 }>
@@ -26,7 +28,8 @@ export default function Experience()
                 <Placeholder position-y={ 0.5 } scale={[2, 3, 2]} />
             }
         >
-            <Model />
+            {/* <Model /> */}
+            <Hamburger position-x={ 0 } scale={ 0.35 } />
         </Suspense>
     </>
 }
