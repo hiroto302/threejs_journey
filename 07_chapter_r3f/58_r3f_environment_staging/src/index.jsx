@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { Canvas } from '@react-three/fiber'
 import * as THREE from 'three'
 import Experience from './Experience.jsx'
+import Stage from './stage.jsx'
 
 const root = ReactDOM.createRoot(document.querySelector('#root'))
 
@@ -27,7 +28,8 @@ root.render(
         } }
         onCreated={ created }
         >
-        <color args={ ['red']} attach="background"/>
-        <Experience />
+        {/* <color args={ ['red']} attach="background"/> */}
+        {/* <Experience /> */}
+        <Stage />
     </Canvas>
 )
