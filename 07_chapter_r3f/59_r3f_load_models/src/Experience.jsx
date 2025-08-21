@@ -4,6 +4,7 @@ import { Suspense } from 'react'
 import Model from './Model.js'
 import Placeholder  from './Placeholder.js'
 import Hamburger from './Hamburger.js'
+import Fox from './Fox.js'
 
 export default function Experience()
 {
@@ -29,7 +30,8 @@ export default function Experience()
             }
         >
             {/* <Model /> */}
-            <Hamburger position-x={ 0 } scale={ 0.35 } />
+            {/* <Hamburger position-x={ 0 } scale={ 0.35 } /> */}
+            <Fox />
         </Suspense>
     </>
 }
