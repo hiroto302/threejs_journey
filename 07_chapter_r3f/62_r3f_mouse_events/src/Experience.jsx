@@ -1,10 +1,12 @@
 import { useFrame } from '@react-three/fiber'
-import { OrbitControls } from '@react-three/drei'
+import { meshBounds, OrbitControls, useGLTF } from '@react-three/drei'
 import { useRef } from 'react'
+
 
 export default function Experience()
 {
     const cube = useRef()
+    const hamburger = useGLTF('/hamburger.glb')
 
     const eventHandler = (event) => {
         console.log('click', event)
@@ -18,7 +20,9 @@ export default function Experience()
 
     return <>
 
-        <OrbitControls makeDefault />
+        <OrbitControls
+            makeDefault
+        />
 
         <directionalLight position={ [ 1, 2, 3 ] } intensity={ 4.5 } />
         <ambientLight intensity={ 1.5 } />
@@ -28,7 +32,16 @@ export default function Experience()
             <meshStandardMaterial color="orange" />
         </mesh>
 
-        <mesh ref={ cube } position-x={ 2 } scale={ 1.5 } onClick={ eventHandler }>
+        <mesh
+            ref={ cube }
+            raycast={ meshBounds}
+            position-x={ 2 }
+            scale={ 1.5 }
+            onClick={ eventHandler }
+            //NOTE: This will not work
+            onPointerEnter={ () => { document.body.style.cursor = 'pointer' } }
+            onPointerLeave={ () => { document.body.style.cursor = 'default' } }
+        >
             <boxGeometry />
             <meshStandardMaterial color="mediumpurple" />
         </mesh>
@@ -37,6 +50,19 @@ export default function Experience()
             <planeGeometry />
             <meshStandardMaterial color="greenyellow" />
         </mesh>
+
+        <primitive
+            object={ hamburger.scene }
+            position-y={ 0.5 }
+            scale={ 0.25 }
+            onClick={ (event) => {
+                //NOTE: 全てのモデルの名前でクリックイベントが発火する
+                console.log(event.object.name)
+                //NOTE: 止めることで最初のメッシュのクリックイベントのみ発火
+                event.stopPropagation()
+            }}
+        >
+        </primitive>
 
     </>
 }
