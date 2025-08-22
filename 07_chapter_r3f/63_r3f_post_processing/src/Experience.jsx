@@ -1,7 +1,7 @@
 import { OrbitControls } from '@react-three/drei'
 import { Perf } from 'r3f-perf'
-import { ToneMapping, EffectComposer, Vignette } from '@react-three/postprocessing'
-import { ToneMappingMode, BlendFunction } from 'postprocessing'
+import { ToneMapping, EffectComposer, Vignette, Glitch } from '@react-three/postprocessing'
+import { ToneMappingMode, BlendFunction, GlitchMode } from 'postprocessing'
 
 
 /*NOTE: EffectComposer について
@@ -18,6 +18,13 @@ export default function Experience()
                 offset={ 0.3 }
                 darkness={ 0.9 }
                 blendFunction={ BlendFunction.NORMAL }
+            />
+            <Glitch
+                delay={[ 0.5, 1 ]}
+                duration={[ 0.1, 0.3 ]}
+                strength={[ 0.02, 0.04 ]}
+                mode={ GlitchMode.CONSTANT_WILD }
+                // active
             />
             {/* <ToneMapping mode={ ToneMappingMode.ACES_FILMIC }/> */}
         </EffectComposer>
