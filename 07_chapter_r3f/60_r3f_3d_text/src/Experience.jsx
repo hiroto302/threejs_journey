@@ -1,6 +1,7 @@
 import { OrbitControls, Text3D, Center, useMatcapTexture } from '@react-three/drei'
 import { Perf } from 'r3f-perf'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
 //NOTE: https://gero3.github.io/facetype.js/ ここからフォントをダウンロード・作成できる
@@ -30,6 +31,7 @@ const material = new THREE.MeshMatcapMaterial()
 
 export default function Experience()
 {
+    const donutsGroup = useRef()
     // id: 8B892C_D4E856_475E2D_47360A
     const [matcapTexture] = useMatcapTexture('8B892C_D4E856_475E2D_47360A', 256)
 
@@ -43,6 +45,20 @@ export default function Experience()
         material.matcap = matcapTexture
         material.needsUpdate = true
     }, [])
+
+    useFrame((state, delta) => {
+        // ドーナツのグループを回転させる
+        donutsGroup.current.rotation.y += delta * 0.1
+        donutsGroup.current.rotation.x += delta * 0.1
+        donutsGroup.current.rotation.z += delta * 0.1
+
+        for (const donut of donutsGroup.current.children)
+        {
+            // ドーナツの回転をランダムに変える
+            donut.rotation.x += delta * Math.random()
+            donut.rotation.y += delta * Math.random()
+        }
+    })
 
     return <>
 
@@ -72,24 +88,26 @@ export default function Experience()
             </Text3D>
         </Center>
 
-        { [...Array(100)].map((value, index) =>
-            <mesh
-                geometry={torusGeometry}
-                material={material}
-                position={[
-                    (Math.random() - 0.5) * 10,
-                    (Math.random() - 0.5) * 10,
-                    (Math.random() - 0.5) * 10
-                ]}
-                scale={0.2 + Math.random() * 0.2}
-                rotation={[
-                    Math.random() * Math.PI,
-                    Math.random() * Math.PI,
-                    0
-                ]}
-                // key={crypto.randomUUID()}
-                key={index}
-            />
-        )}
+        <group ref={ donutsGroup }>
+            { [...Array(100)].map((value, index) =>
+                <mesh
+                    geometry={torusGeometry}
+                    material={material}
+                    position={[
+                        (Math.random() - 0.5) * 10,
+                        (Math.random() - 0.5) * 10,
+                        (Math.random() - 0.5) * 10
+                    ]}
+                    scale={0.2 + Math.random() * 0.2}
+                    rotation={[
+                        Math.random() * Math.PI,
+                        Math.random() * Math.PI,
+                        0
+                    ]}
+                    // key={crypto.randomUUID()}
+                    key={index}
+                />
+            )}
+        </group>
     </>
 }
