@@ -1,5 +1,6 @@
 import { OrbitControls, Text3D, Center, useMatcapTexture } from '@react-three/drei'
 import { Perf } from 'r3f-perf'
+import { useState } from 'react'
 
 //NOTE: https://gero3.github.io/facetype.js/ ここからフォントをダウンロード・作成できる
 
@@ -24,6 +25,10 @@ map()は、存在するプロパティ（インデックス）に対してのみ
 
 export default function Experience()
 {
+    // geometry 100→2, shaders 2→1 とパフォーマンスが良くなる
+    const [ torusGeometry, setTorusGeometry ] = useState()
+    const [ material, setMaterial ] = useState()
+
     // id: 8B892C_D4E856_475E2D_47360A
     const [matcapTexture] = useMatcapTexture('8B892C_D4E856_475E2D_47360A', 256)
 
@@ -32,6 +37,9 @@ export default function Experience()
         <Perf position="top-left" />
 
         <OrbitControls makeDefault />
+
+        <torusGeometry ref={ setTorusGeometry } args={[1, 0.6, 16, 32]}/>
+        <meshMatcapMaterial ref={ setMaterial } matcap={matcapTexture}/>
 
         {/* Center: pivot（基準点）を幾何学的中心に移動させるイメージ */}
         <Center position={[0, 0, 0]}>
@@ -45,14 +53,17 @@ export default function Experience()
                     bevelSize={0.02}           // ベベルのサイズ
                     bevelOffset={0}            // ベベルのオフセット
                     bevelSegments={5}          // ベベルの分割数
+                    material={ material }
             >
                 Hello World!
-                <meshMatcapMaterial matcap={ matcapTexture } />
+                {/* <meshMatcapMaterial matcap={ matcapTexture } /> */}
             </Text3D>
         </Center>
 
         { [...Array(100)].map((value, index) =>
             <mesh
+                geometry={torusGeometry}
+                material={material}
                 position={[
                     (Math.random() - 0.5) * 10,
                     (Math.random() - 0.5) * 10,
@@ -66,10 +77,7 @@ export default function Experience()
                 ]}
                 // key={crypto.randomUUID()}
                 key={index}
-            >
-                <torusGeometry args={[1, 0.6, 16, 32]}/>
-                <meshMatcapMaterial matcap={ matcapTexture } />
-            </mesh>
+            />
         )}
     </>
 }
