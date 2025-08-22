@@ -9,6 +9,19 @@ idは github.com/emmelleppi/matcaps から取得される。
 今回の実装方法は、CDN(Content Delivery Network)に依存している。なので id が変わると、matcapTexture も変わる。
 なので、本番環境では、matcapTexture をローカルに保存して使用することを推奨。
 */
+
+/* NOTE: 配列を使った繰り返し処理でコンポーネントを大量生成するテクニック
+Array(100) → [empty × 100] (これは動作しない)
+[...Array(100)] → [undefined × 100] (動作する！)
+スプレッド演算子によって、実際のインデックス（0, 1, 2...99）が作成され、全てにundefinedが割り当てられる。
+これにより、map()メソッドを使用して、100個の要素を生成することができる。
+    value: undefined, index: 0
+    value: undefined, index: 1
+    value: undefined, index: 2 これらが map()の引数として渡される。
+
+map()は、存在するプロパティ（インデックス）に対してのみコールバックを実行
+*/
+
 export default function Experience()
 {
     // id: 8B892C_D4E856_475E2D_47360A
@@ -37,5 +50,26 @@ export default function Experience()
                 <meshMatcapMaterial matcap={ matcapTexture } />
             </Text3D>
         </Center>
+
+        { [...Array(100)].map((value, index) =>
+            <mesh
+                position={[
+                    (Math.random() - 0.5) * 10,
+                    (Math.random() - 0.5) * 10,
+                    (Math.random() - 0.5) * 10
+                ]}
+                scale={0.2 + Math.random() * 0.2}
+                rotation={[
+                    Math.random() * Math.PI,
+                    Math.random() * Math.PI,
+                    0
+                ]}
+                // key={crypto.randomUUID()}
+                key={index}
+            >
+                <torusGeometry args={[1, 0.6, 16, 32]}/>
+                <meshMatcapMaterial matcap={ matcapTexture } />
+            </mesh>
+        )}
     </>
 }
