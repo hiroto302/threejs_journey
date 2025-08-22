@@ -1,9 +1,26 @@
 import { OrbitControls } from '@react-three/drei'
 import { Perf } from 'r3f-perf'
+import { ToneMapping, EffectComposer, Vignette } from '@react-three/postprocessing'
+import { ToneMappingMode, BlendFunction } from 'postprocessing'
+
+
+/*NOTE: EffectComposer について
+- mode設定は最後に行う必要があることに注意
+*/
 
 export default function Experience()
 {
     return <>
+        <color args={ ['#ffffff'] } attach="background" />
+
+        <EffectComposer>
+            <Vignette
+                offset={ 0.3 }
+                darkness={ 0.9 }
+                blendFunction={ BlendFunction.NORMAL }
+            />
+            {/* <ToneMapping mode={ ToneMappingMode.ACES_FILMIC }/> */}
+        </EffectComposer>
 
         <Perf position="top-left" />
 
