@@ -1,6 +1,7 @@
 import { OrbitControls, Text3D, Center, useMatcapTexture } from '@react-three/drei'
 import { Perf } from 'r3f-perf'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import * as THREE from 'three'
 
 //NOTE: https://gero3.github.io/facetype.js/ ここからフォントをダウンロード・作成できる
 
@@ -23,14 +24,25 @@ Array(100) → [empty × 100] (これは動作しない)
 map()は、存在するプロパティ（インデックス）に対してのみコールバックを実行
 */
 
+
+const torusGeometry = new THREE.TorusGeometry(1, 0.6, 16, 32)
+const material = new THREE.MeshMatcapMaterial()
+
 export default function Experience()
 {
-    // geometry 100→2, shaders 2→1 とパフォーマンスが良くなる
-    const [ torusGeometry, setTorusGeometry ] = useState()
-    const [ material, setMaterial ] = useState()
-
     // id: 8B892C_D4E856_475E2D_47360A
     const [matcapTexture] = useMatcapTexture('8B892C_D4E856_475E2D_47360A', 256)
+
+    // geometry 100→2, shaders 2→1 とパフォーマンスが良くなる
+    // const [ torusGeometry, setTorusGeometry ] = useState()
+    // const [ material, setMaterial ] = useState()
+
+    useEffect(() => {
+        matcapTexture.colorSpace = THREE.SRGBColorSpace
+
+        material.matcap = matcapTexture
+        material.needsUpdate = true
+    }, [])
 
     return <>
 
@@ -38,8 +50,8 @@ export default function Experience()
 
         <OrbitControls makeDefault />
 
-        <torusGeometry ref={ setTorusGeometry } args={[1, 0.6, 16, 32]}/>
-        <meshMatcapMaterial ref={ setMaterial } matcap={matcapTexture}/>
+        {/* <torusGeometry ref={ setTorusGeometry } args={[1, 0.6, 16, 32]}/>
+        <meshMatcapMaterial ref={ setMaterial } matcap={matcapTexture}/> */}
 
         {/* Center: pivot（基準点）を幾何学的中心に移動させるイメージ */}
         <Center position={[0, 0, 0]}>
