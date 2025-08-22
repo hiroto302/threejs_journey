@@ -5,7 +5,12 @@ import { useRef } from 'react'
 export default function Experience()
 {
     const cube = useRef()
-    
+
+    const eventHandler = (event) => {
+        console.log('click', event)
+        cube.current.material.color.set(`hsl(${Math.random() * 360}, 100%, 75%)`)
+    }
+
     useFrame((state, delta) =>
     {
         cube.current.rotation.y += delta * 0.2
@@ -18,12 +23,12 @@ export default function Experience()
         <directionalLight position={ [ 1, 2, 3 ] } intensity={ 4.5 } />
         <ambientLight intensity={ 1.5 } />
 
-        <mesh position-x={ - 2 }>
+        <mesh position-x={ - 2 } onClick={(event)=> {event.stopPropagation()}}>
             <sphereGeometry />
             <meshStandardMaterial color="orange" />
         </mesh>
 
-        <mesh ref={ cube } position-x={ 2 } scale={ 1.5 }>
+        <mesh ref={ cube } position-x={ 2 } scale={ 1.5 } onClick={ eventHandler }>
             <boxGeometry />
             <meshStandardMaterial color="mediumpurple" />
         </mesh>
