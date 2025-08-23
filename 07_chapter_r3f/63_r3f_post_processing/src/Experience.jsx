@@ -5,6 +5,7 @@ import { ToneMappingMode, BlendFunction, GlitchMode } from 'postprocessing'
 import { texture3D } from 'three/src/nodes/TSL.js'
 import Drunk from './Drunk'
 import { useRef } from 'react'
+import { useControls } from 'leva'
 
 
 /* NOTE: Post-processing について
@@ -21,6 +22,12 @@ Bloom
 export default function Experience()
 {
     const drunkRef = useRef()
+
+    const drunkProps = useControls('Drunk Effect',
+    {
+        frequency: { value: 2.0, min: 1.0, max: 30.0, step: 0.1 },
+        amplitude: { value: 0.1, min: 0.0, max: 1.0, step: 0.1 }
+    })
 
     return <>
         {/* <color args={ ['#000000'] } attach="background" /> */}
@@ -56,8 +63,8 @@ export default function Experience()
 
             <Drunk
                 ref={ drunkRef }
-                frequency={ 10.0 }
-                amplitude={ 0.1 }
+                { ...drunkProps }
+                blendFunction={ BlendFunction.DARKEN }
             />
 
             <ToneMapping mode={ ToneMappingMode.ACES_FILMIC }/>
