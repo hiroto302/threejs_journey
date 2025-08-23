@@ -1,6 +1,6 @@
 import { OrbitControls } from '@react-three/drei'
 import { Perf } from 'r3f-perf'
-import { ToneMapping, EffectComposer, Vignette, Glitch, Noise, Bloom } from '@react-three/postprocessing'
+import { ToneMapping, EffectComposer, Vignette, Glitch, Noise, Bloom, DepthOfField } from '@react-three/postprocessing'
 import { ToneMappingMode, BlendFunction, GlitchMode } from 'postprocessing'
 import { texture3D } from 'three/src/nodes/TSL.js'
 
@@ -39,11 +39,17 @@ export default function Experience()
                 blendFunction={ BlendFunction.AVERAGE }
                 opacity={ 1.7 }
             /> */}
-            <Bloom
+            {/* <Bloom
                 luminanceThreshold={ 1.1 }
                 mipmapBlur={ true }
                 intensity={ 1.0 }
+            /> */}
+            <DepthOfField
+                focusDistance={ 0.025 }
+                focalLength={ 0.025 }
+                bokehScale={ 6 }
             />
+
             <ToneMapping mode={ ToneMappingMode.ACES_FILMIC }/>
 
         </EffectComposer>
