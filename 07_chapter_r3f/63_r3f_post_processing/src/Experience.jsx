@@ -3,6 +3,8 @@ import { Perf } from 'r3f-perf'
 import { ToneMapping, EffectComposer, Vignette, Glitch, Noise, Bloom, DepthOfField } from '@react-three/postprocessing'
 import { ToneMappingMode, BlendFunction, GlitchMode } from 'postprocessing'
 import { texture3D } from 'three/src/nodes/TSL.js'
+import Drunk from './Drunk'
+import { useRef } from 'react'
 
 
 /* NOTE: Post-processing について
@@ -18,6 +20,8 @@ Bloom
 
 export default function Experience()
 {
+    const drunkRef = useRef()
+
     return <>
         {/* <color args={ ['#000000'] } attach="background" /> */}
         <color args={ ['#ffffff'] } attach="background" />
@@ -44,10 +48,16 @@ export default function Experience()
                 mipmapBlur={ true }
                 intensity={ 1.0 }
             /> */}
-            <DepthOfField
+            {/* <DepthOfField
                 focusDistance={ 0.025 }
                 focalLength={ 0.025 }
                 bokehScale={ 6 }
+            /> */}
+
+            <Drunk
+                ref={ drunkRef }
+                frequency={ 10.0 }
+                amplitude={ 0.1 }
             />
 
             <ToneMapping mode={ ToneMappingMode.ACES_FILMIC }/>
