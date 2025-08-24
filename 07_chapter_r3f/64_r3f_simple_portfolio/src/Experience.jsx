@@ -1,4 +1,4 @@
-import { OrbitControls, useGLTF, Environment, Float } from '@react-three/drei'
+import { OrbitControls, PresentationControls, useGLTF, Environment, Float } from '@react-three/drei'
 
 /*NOTE: 使用するモデル
 CDNから直接読み込むか、ローカルに保存(./public以下)して使用してください
@@ -22,14 +22,22 @@ export default function Experience()
         <Environment preset="city" />
         <color attach="background" args={['#241a1a']} />
 
-        <OrbitControls makeDefault />
-
-        <Float rotationIntensity={0.4}>
-            <primitive
-                object={ computer.scene }
-                position-y={ -1.2 }
-            />
-        </Float>
+        <PresentationControls
+            global
+            rotation={[0.13, 0.1, 0]}
+            polar={[-0.4, 0.2]}
+            azimuth={[-1, 0.75]}
+            damping={0.1}
+            config={{ mass: 2, tension: 400}}
+            snap
+        >
+            <Float rotationIntensity={0.4}>
+                <primitive
+                    object={ computer.scene }
+                    position-y={ -1.2 }
+                />
+            </Float>
+        </PresentationControls>
 
     </>
 }
