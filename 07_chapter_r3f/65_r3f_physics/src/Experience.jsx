@@ -1,6 +1,6 @@
-import { OrbitControls } from '@react-three/drei'
+import { OrbitControls, useGLTF } from '@react-three/drei'
 import { Perf } from 'r3f-perf'
-import { Physics, RigidBody, CuboidCollider, BallCollider } from '@react-three/rapier'
+import { Physics, RigidBody, CuboidCollider, BallCollider, CylinderCollider } from '@react-three/rapier'
 import { TorusGeometry } from 'three'
 import { useRef, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
@@ -34,7 +34,8 @@ kinematic について
 export default function Experience()
 {
     const [ hitSound ] = useState(() => new Audio('./hit.mp3'))
-    console.log(hitSound)
+    
+    const hamburger = useGLTF('./hamburger.glb')
 
     const cube = useRef()
     const twister = useRef()
@@ -79,7 +80,15 @@ export default function Experience()
         <directionalLight castShadow position={ [ 1, 2, 3 ] } intensity={ 4.5 } />
         <ambientLight intensity={ 1.5 } />
 
+
         <Physics debug gravity={ [ 0, -9.81, 0 ] }>
+        {/* ハンバーガー : 1つのColliderで表す*/}
+            <RigidBody colliders={ false } position={ [0, 4, 0]} >
+                <primitive object={ hamburger.scene } scale={ 0.25 } position-y={ 0 } />
+                <CylinderCollider args={ [0.5, 1.25] } />
+            </RigidBody>
+
+s
         {/* 球体 */}
             <RigidBody colliders="ball">
                 <mesh castShadow position={ [ -2, 4, 0 ] }>
