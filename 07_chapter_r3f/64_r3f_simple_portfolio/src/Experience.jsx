@@ -1,4 +1,4 @@
-import { OrbitControls, PresentationControls, useGLTF, Environment, Float } from '@react-three/drei'
+import { OrbitControls, PresentationControls, useGLTF, Environment, Float, ContactShadows } from '@react-three/drei'
 
 /*NOTE: 使用するモデル
 CDNから直接読み込むか、ローカルに保存(./public以下)して使用してください
@@ -38,6 +38,13 @@ export default function Experience()
                 />
             </Float>
         </PresentationControls>
+
+        <ContactShadows
+            position-y={ -1.4 }
+            opacity={0.4}
+            scale={5}
+            blur={2.4}
+        />
 
     </>
 }
