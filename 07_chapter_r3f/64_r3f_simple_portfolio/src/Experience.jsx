@@ -1,4 +1,4 @@
-import { OrbitControls, PresentationControls, useGLTF, Environment, Float, ContactShadows, Html } from '@react-three/drei'
+import { OrbitControls, PresentationControls, useGLTF, Environment, Float, ContactShadows, Html, Text } from '@react-three/drei'
 
 /*NOTE: 使用するモデル
 CDNから直接読み込むか、ローカルに保存(./public以下)して使用してください
@@ -57,6 +57,18 @@ export default function Experience()
                         />
                     </Html>
                 </primitive>
+
+                <Text
+                    font="./bangers-v20-latin-regular.woff"
+                    fontSize={ 1 }
+                    position={ [ 2, 0.75, 0.75 ] }
+                    rotation-y={ -1.25 }
+                    // children={"BRUNO\rSIMON"}
+                    maxWidth={2}
+                    textAlign="center"
+                >
+                    HIROTO TANIGUCHI
+                </Text>
             </Float>
         </PresentationControls>
 
