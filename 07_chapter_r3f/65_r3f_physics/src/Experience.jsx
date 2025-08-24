@@ -2,7 +2,7 @@ import { OrbitControls } from '@react-three/drei'
 import { Perf } from 'r3f-perf'
 import { Physics, RigidBody, CuboidCollider, BallCollider } from '@react-three/rapier'
 import { TorusGeometry } from 'three'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
@@ -33,6 +33,9 @@ kinematic について
 
 export default function Experience()
 {
+    const [ hitSound ] = useState(() => new Audio('./hit.mp3'))
+    console.log(hitSound)
+
     const cube = useRef()
     const twister = useRef()
 
@@ -58,6 +61,14 @@ export default function Experience()
         const z = Math.sin(angle) * 2
         twister.current.setNextKinematicTranslation({ x: x, y: -0.8, z: z })
     })
+
+    const collisionEnter = () =>
+    {
+        console.log('collision')
+        hitSound.currentTime = 0
+        hitSound.volume = Math.random()
+        hitSound.play()
+    }
 
     return <>
 
@@ -114,6 +125,10 @@ export default function Experience()
                     restitution={ 0 }
                     friction={ 0 }      // 摩擦をなくす氷上のような床を表現
                     colliders={false}   // カスタムコライダーを使用するためにfalseに設定
+                    onCollisionEnter={ collisionEnter }
+                    // onCollisionExit={ () => console.log('exit') }
+                    onSleep={ () => console.log('sleep') }
+                    onWake={ () => console.log('wake') }
                 >
                 <mesh castShadow onClick={ cubeJump } >
                     <boxGeometry args={ [1, 1, 1] } />
