@@ -1,8 +1,8 @@
 import { OrbitControls, useGLTF } from '@react-three/drei'
 import { Perf } from 'r3f-perf'
-import { Physics, RigidBody, CuboidCollider, BallCollider, CylinderCollider } from '@react-three/rapier'
+import { Physics, RigidBody, InstancedRigidBodies, CuboidCollider, BallCollider, CylinderCollider } from '@react-three/rapier'
 import { TorusGeometry } from 'three'
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
@@ -34,11 +34,14 @@ kinematic について
 export default function Experience()
 {
     const [ hitSound ] = useState(() => new Audio('./hit.mp3'))
-    
+
     const hamburger = useGLTF('./hamburger.glb')
+
+    const cubesCount = 1000
 
     const cube = useRef()
     const twister = useRef()
+    const cubes = useRef()
 
     const cubeJump = () =>
     {
@@ -47,6 +50,38 @@ export default function Experience()
         cube.current.applyImpulse({ x: 0, y: 5, z: 0 })
         cube.current.applyTorqueImpulse({ x: 0, y: 1, z: 0 })
     }
+
+    //NOTE: InstancedRigidBodies を使用する場合、以下の useEffect は不要
+    // useEffect(() =>
+    // {
+    //     for(let i = 0; i < cubeCount; i++)
+    //     {
+    //         const matrix = new THREE.Matrix4()
+    //         // matrix.setPosition((Math.random() - 0.5) * 4, 5 + i * 2, (Math.random() - 0.5) * 4)
+    //         matrix.compose(
+    //             new THREE.Vector3(i*2, 0, 0),
+    //             new THREE.Quaternion(),
+    //             new THREE.Vector3(1,1,1)
+    //         )
+    //         cubes.current.setMatrixAt(i, matrix)
+    //     }
+    //     cubes.current.instanceMatrix.needsUpdate = true
+    // }, [])
+
+    //NOTE: InstancedRigidBodies で使用する instances 配列を useMemo で作成
+    const instances = useMemo(() => {
+        const instances = []
+        for(let i = 0; i < cubesCount; i++)
+        {
+            instances.push({
+                key: 'instance_' + i,
+                position: [ (Math.random() - 0.5) * 8, 3 + i + 0.2, (Math.random() - 0.5) * 8],
+                rotation: [0,0,0],
+                scale: [1,1,1],
+            })
+        }
+        return instances
+    }, [])
 
     useFrame((state, delta) =>
     {
@@ -173,6 +208,21 @@ s
                     <meshStandardMaterial color="greenyellow" />
                 </mesh>r
             </RigidBody>
+
+            <RigidBody type='fixed'>
+                <CuboidCollider args={ [5, 2, 0.5] } position={ [0, 1, 5.25] } />
+                <CuboidCollider args={ [5, 2, 0.5] } position={ [0, 1, -5.5] } />
+                <CuboidCollider args={ [0.5, 2, 5] } position={ [5.5, 1, 0] } />
+                <CuboidCollider args={ [0.5, 2, 5] } position={ [-5.5, 1, 0] } />
+            </RigidBody>
+
+        {/* InstancedRigidBodies: instancedMesh で ref={cubes} と useEffect で細かい設定が必要なくなる */}
+            <InstancedRigidBodies instances={instances} >
+                <instancedMesh args={ [ null, null, cubesCount ] }>
+                    <boxGeometry args={ [1, 1, 1] } />
+                    <meshStandardMaterial color="tomato" />
+                </instancedMesh>
+            </InstancedRigidBodies>
         </Physics>
     </>
 }
