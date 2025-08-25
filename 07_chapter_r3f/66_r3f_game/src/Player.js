@@ -16,7 +16,7 @@ export default function Player()
   // Point: world.raw() gives access to the underlying Rapier physics world だったが、現在は、world自体がrawになっている
   // なので、world.raw()ではなく、worldで良い
 
-  const [ smoothedCameraPosition ] = useState(() => new THREE.Vector3())
+  const [ smoothedCameraPosition ] = useState(() => new THREE.Vector3(10, 10, 10))
   const [ smoothedCameraTarget ] = useState(() => new THREE.Vector3())
 
   const jump = () => {
@@ -102,8 +102,8 @@ export default function Player()
     cameraTarget.copy(bodyPosition)
     cameraTarget.y += 0.25
 
-    smoothedCameraPosition.lerp(cameraPosition, 0.1)
-    smoothedCameraTarget.lerp(cameraTarget, 0.1)
+    smoothedCameraPosition.lerp(cameraPosition, 5 * delta)
+    smoothedCameraTarget.lerp(cameraTarget, 5 * delta)
 
     state.camera.position.copy(smoothedCameraPosition)
     state.camera.lookAt(smoothedCameraTarget)
