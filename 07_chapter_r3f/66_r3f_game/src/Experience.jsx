@@ -3,6 +3,7 @@ import { Physics } from '@react-three/rapier'
 
 import Lights from './Lights.jsx'
 import { Level, BlockSpinner } from './Level.js'
+import Player from './Player.js'
 
 export default function Experience()
 {
@@ -11,6 +12,7 @@ export default function Experience()
         <Physics debug >
             <Lights />
             <Level count={3} />
+            <Player />
         </Physics>
     </>
 }
