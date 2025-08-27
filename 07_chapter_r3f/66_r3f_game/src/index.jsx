@@ -4,6 +4,7 @@ import { Canvas } from '@react-three/fiber'
 import { KeyboardControls } from '@react-three/drei'
 
 import Experience from './Experience.jsx'
+import Interface from './interface.js'
 
 const root = ReactDOM.createRoot(document.querySelector('#root'))
 
@@ -28,6 +29,6 @@ root.render(
             >
                 <Experience />
         </Canvas>
+        <Interface />
     </KeyboardControls>
-    
 )
