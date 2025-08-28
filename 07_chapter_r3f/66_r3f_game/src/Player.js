@@ -3,10 +3,12 @@ import { useFrame } from "@react-three/fiber"
 import { useKeyboardControls } from "@react-three/drei"
 import { useRef, useEffect, useState } from "react"
 import * as THREE from "three"
+import useGame from "./stores/useGame.js"
+
+console.log(useGame.subscribe) // subscribeWithSelectorが正しく動作しているか確認するためのログ
 
 export default function Player()
 {
-  console.log('Player Reloaded')
   const body = useRef()
 
   // const { forward, backward, leftward, rightward, jump } = useKeyboardControls()
@@ -18,6 +20,11 @@ export default function Player()
 
   const [ smoothedCameraPosition ] = useState(() => new THREE.Vector3(10, 10, 10))
   const [ smoothedCameraTarget ] = useState(() => new THREE.Vector3())
+
+  const start = useGame((state) => state.start)
+  const end = useGame((state) => state.end)
+  const restart = useGame((state) => state.restart)
+  const blocksCount = useGame((state) => state.blocksCount)
 
   const jump = () => {
     // Pint: ダブルジャンプ防止
@@ -34,9 +41,34 @@ export default function Player()
     }
   }
 
+  const reset = () => {
+    console.log('reset')
+    body.current.setTranslation({ x: 0, y: 1, z: 0 })
+    body.current.setLinvel({ x: 0, y: 0, z: 0 })
+    body.current.setAngvel({ x: 0, y: 0, z: 0 })
+  }
+
   useEffect(() =>
   {
-    console.log('useEffect')
+    const unSubscribeReset = useGame.subscribe(
+      (state) => state.phase,
+      (value) =>
+      {
+        console.log('phase changed to', value)
+        if(value === 'ready')
+        {
+          reset()
+        }
+        // else if(value === 'ended')
+        // {
+        //   const impulse = { x: (Math.random() - 0.5) * 2, y: 0.5, z: (Math.random() - 0.5) * 2 }
+        //   const torque = { x: (Math.random() - 0.5) * 0.2, y: (Math.random() - 0.5) * 0.2, z: (Math.random() - 0.5) * 0.2 }
+        //   body.current.applyImpulse(impulse)
+        //   body.current.applyTorqueImpulse(torque)
+        // }
+      }
+    )
+
     const unsubscribeJump = subscribeKeys(
       // 第一引数は、stateを受け取る関数で、stateはuseKeyboardControlsの中の状態を表す
       // ここでは、jumpの状態を監視する
@@ -55,8 +87,18 @@ export default function Player()
       }
     )
 
+    const unsubscribeAny =  subscribeKeys(
+      () =>
+      {
+        // console.log('any key pressed')
+        start()
+      }
+    )
+
     return () => {
+      unSubscribeReset()
       unsubscribeJump()
+      unsubscribeAny()
     }
   }, [ ])
 
@@ -107,6 +149,18 @@ export default function Player()
 
     state.camera.position.copy(smoothedCameraPosition)
     state.camera.lookAt(smoothedCameraTarget)
+
+    // Phases of the game
+    if(bodyPosition.z < -(blocksCount * 4 + 2))
+    {
+      end()
+    }
+
+    if(bodyPosition.y < -4)
+    {
+      console.log('AAAAAh!!!')
+      restart()
+    }
   })
 
   return <>
