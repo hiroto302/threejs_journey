@@ -14,6 +14,9 @@ export default function Experience()
 
 
     return <>
+
+        <color attach="background" args={['#87ceeb']} />
+
         <OrbitControls makeDefault />
         <Physics debug={ false } >
             <Lights />
