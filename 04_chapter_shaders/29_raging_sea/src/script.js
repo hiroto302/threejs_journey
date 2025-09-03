@@ -4,8 +4,8 @@ import GUI from 'lil-gui'
 import waterVertexShader from './shaders/water/vertex.glsl'
 import waterFragmentShader from './shaders/water/fragment.glsl'
 
-console.log(waterVertexShader)
-console.log(waterFragmentShader)
+// console.log(waterVertexShader)
+// console.log(waterFragmentShader)
 
 /**
  * Base
@@ -30,7 +30,19 @@ const waterMaterial = new THREE.ShaderMaterial({
     vertexShader: waterVertexShader,
     fragmentShader: waterFragmentShader,
     // side: THREE.DoubleSide
+    uniforms:
+    {
+        uTime: { value: 0 },
+        uBigWavesElevation: { value: 0.2 },
+        uBigWavesFrequency: { value: new THREE.Vector2(4, 1.5) },
+        uBigWavesSpeed: { value: 0.75 }
+    }
 })
+
+gui.add(waterMaterial.uniforms.uBigWavesElevation, 'value').min(0).max(1).step(0.001).name('uBigWaveElevation')
+gui.add(waterMaterial.uniforms.uBigWavesFrequency.value, 'x').min(0).max(10).step(0.001).name('uBigWaveFrequencyX')
+gui.add(waterMaterial.uniforms.uBigWavesFrequency.value, 'y').min(0).max(10).step(0.001).name('uBigWaveFrequencyY')
+gui.add(waterMaterial.uniforms.uBigWavesSpeed, 'value').min(0).max(4).step(0.001).name('uBigWaveSpeed')
 
 // Mesh
 const water = new THREE.Mesh(waterGeometry, waterMaterial)
@@ -89,6 +101,9 @@ const clock = new THREE.Clock()
 const tick = () =>
 {
     const elapsedTime = clock.getElapsedTime()
+
+    // Update water
+    waterMaterial.uniforms.uTime.value = elapsedTime
 
     // Update controls
     controls.update()
