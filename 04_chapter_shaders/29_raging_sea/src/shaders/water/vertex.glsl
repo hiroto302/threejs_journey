@@ -3,6 +3,7 @@ uniform float uBigWavesElevation;
 uniform vec2 uBigWavesFrequency;
 uniform float uBigWavesSpeed;
 
+
 varying float vElevation;
 
 /* NOTE 頂点シェーダー
