@@ -3,6 +3,8 @@ uniform float uBigWavesElevation;
 uniform vec2 uBigWavesFrequency;
 uniform float uBigWavesSpeed;
 
+varying float vElevation;
+
 /* NOTE 頂点シェーダー
   役割: 頂点の位置を変換し、最終的なクリップ空間での位置を計算する
   - modelMatrix: モデルのローカル座標をワールド座標に変換するための行列
@@ -40,4 +42,7 @@ void main()
   vec4 projectedPosition = projectionMatrix * viewPosition;
 
   gl_Position = projectedPosition;
+
+  // Varying: フラグメントシェーダーに波の高さを渡す
+  vElevation = elevation;
 }
