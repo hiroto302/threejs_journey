@@ -31,6 +31,18 @@ void main()
 
   //Elevation
   // ワールド座標の x,z位置を基に波の高さを計算
+  /*NOTE: 波の高さを計算する式
+    1. X軸方向の波:
+        => sin(x座標 * 周波数 + 時間 * 速度)
+    2. Z軸方向の波:
+        => sin(z座標 * 周波数 + 時間 * 速度)
+    3. なぜ2つのsin波を掛け合わせるのか？
+        => 2つのsin波を掛け算することで、格子状の波パターンが生成
+    4. 最終的な波の高さ:
+        => (X軸の波) * (Z軸の波) * 波の振幅
+
+    この手法は procedural wave generation（手続き的波生成）の基本的なテクニック。
+  */
   float elevation = sin(modelPosition.x * uBigWavesFrequency.x + uTime * uBigWavesSpeed) *
                     sin(modelPosition.z * uBigWavesFrequency.y + uTime * uBigWavesSpeed) *
                     uBigWavesElevation;
