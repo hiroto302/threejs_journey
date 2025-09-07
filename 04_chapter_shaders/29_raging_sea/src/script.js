@@ -1,8 +1,14 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import GUI from 'lil-gui'
-import waterVertexShader from './shaders/water/normal/vertex.glsl'
-import waterFragmentShader from './shaders/water/normal/fragment.glsl'
+// Shaders
+// normal water (こちらを試すときは、uBigWavesFrequency: { value: new THREE.Vector2(10, 1.5) }, speed: 0 に変更するとわかりやすい)
+// import waterVertexShader from './shaders/water/normal/vertex.glsl'
+// import waterFragmentShader from './shaders/water/normal/fragment.glsl'
+
+// small waves
+import waterVertexShader from './shaders/water/small_waves/vertex.glsl'
+import waterFragmentShader from './shaders/water/small_waves/fragment.glsl'
 
 // console.log(waterVertexShader)
 // console.log(waterFragmentShader)
@@ -38,13 +44,19 @@ const waterMaterial = new THREE.ShaderMaterial({
     {
         uTime: { value: 0 },
         uBigWavesElevation: { value: 0.2 },
-        uBigWavesFrequency: { value: new THREE.Vector2(10, 1.5) }, // ４に戻す
-        uBigWavesSpeed: { value: 0.0 },    // 0.75に戻す
+        uBigWavesFrequency: { value: new THREE.Vector2(4, 1.5) },
+        uBigWavesSpeed: { value: 0.75 },
 
         uDepthColor: { value: new THREE.Color(debugObject.depthColor) },
         uSurfaceColor: { value: new THREE.Color(debugObject.surfaceColor) },
         uColorOffset: { value: 0.25 },
         uColorMultiplier: { value: 5.0 },
+
+        // small waves
+        uSmallWavesElevation: { value: 0.15 },
+        uSmallWavesFrequency: { value: 3.0 },
+        uSmallWavesSpeed: { value: 0.2 },
+        uSmallWavesIterations: { value: 4 }
     }
 })
 
@@ -64,6 +76,11 @@ gui.addColor(debugObject, 'surfaceColor').name('surfaceColor').onChange(() =>
 })
 gui.add(waterMaterial.uniforms.uColorOffset, 'value').min(0).max(1).step(0.001).name('uColorOffset')
 gui.add(waterMaterial.uniforms.uColorMultiplier, 'value').min(0).max(1).step(0.001).name('uColorMultiplier')
+// small waves
+gui.add(waterMaterial.uniforms.uSmallWavesElevation, 'value').min(0).max(1).step(0.001).name('uSmallWavesElevation')
+gui.add(waterMaterial.uniforms.uSmallWavesFrequency, 'value').min(0).max(30).step(0.001).name('uSmallWavesFrequency')
+gui.add(waterMaterial.uniforms.uSmallWavesSpeed, 'value').min(0).max(4).step(0.001).name('uSmallWavesSpeed')
+gui.add(waterMaterial.uniforms.uSmallWavesIterations, 'value').min(1).max(8).step(1).name('uSmallWavesIterations')
 
 
 

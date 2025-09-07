@@ -6,6 +6,8 @@ uniform float uBigWavesSpeed;
 
 varying float vElevation;
 
+// 参考: https://claude.ai/share/45abf93a-4a75-4791-9ad0-d99ddc49876f
+
 /* NOTE 頂点シェーダー
   役割: 頂点の位置を変換し、最終的なクリップ空間での位置を計算する
   - modelMatrix: モデルのローカル座標をワールド座標に変換するための行列
