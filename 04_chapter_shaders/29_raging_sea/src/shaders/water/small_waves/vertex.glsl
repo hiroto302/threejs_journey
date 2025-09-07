@@ -12,11 +12,13 @@ varying float vElevation;
 
 //	Classic Perlin 3D Noise
 //	by Stefan Gustavson (https://github.com/stegu/webgl-noise)
-//
+// このc関数はClassic Perlin 3D Noiseの実装で、Stefan Gustavson氏の有名なwebgl-noiseライブラリ
 vec4 permute(vec4 x){return mod(((x*34.0)+1.0)*x, 289.0);}
 vec4 taylorInvSqrt(vec4 r){return 1.79284291400159 - 0.85373472095314 * r;}
 vec3 fade(vec3 t) {return t*t*t*(t*(t*6.0-15.0)+10.0);}
 
+// -1.0 ~ 1.0の範囲でノイズを生成
+// vec3 P: 3次元座標（x, y, z）この座標に基づいて、滑らかで自然なランダム値を生成
 float cnoise(vec3 P){
   vec3 Pi0 = floor(P); // Integer part for indexing
   vec3 Pi1 = Pi0 + vec3(1.0); // Integer part + 1
@@ -93,6 +95,35 @@ void main()
                     sin(modelPosition.z * uBigWavesFrequency.y + uTime * uBigWavesSpeed) *
                     uBigWavesElevation;
 
+  /* small waves を追加
+  1. modelPosition.xz * uSmallWavesFrequency * i
+      XZ平面（水平面）の座標を周波数でスケール
+      i倍することで、ループごとに周波数が高くなる（細かい波）
+
+  2. uTime * uSmallWavesSpeed
+      Z軸成分として時間を使用
+      波のアニメーション（時間変化）を表現
+
+  3. abs(cnoise(...))
+      ノイズの絶対値を取る。-1.0〜1.0の範囲を0.0〜1.0に変換
+      常に正の値になるため、波が「下に凹む」ことがない
+
+  4. * uSmallWavesElevation / i
+      ノイズの振幅をuSmallWavesElevationでスケールし、iで割ることで
+      ループごとに振幅が小さくなる（細かい波の影響が小さくなる）
+      uSmallWavesElevation：小さい波の最大高さ
+      /i：高周波成分ほど振幅を小さくする（自然な見た目）
+
+  5. elevation -= ...
+      各ループで計算された小波の高さをメインのelevationから減算
+      これにより、小波が全体の波の形状に影響を与え
+      減算している点が重要
+      abs()で正の値になったノイズを引くことで、波の谷や細かい凹凸を作成
+
+  6. forループ
+      uSmallWavesIterations回ループして、小波の影響を累積
+      これにより、より複雑で自然な波の表現が可能s
+  */
   for (float i = 1.0; i <= uSmallWavesIterations; i++)
   {
     elevation -= (abs(cnoise(vec3(modelPosition.xz * uSmallWavesFrequency * i, uTime * uSmallWavesSpeed)) ) * uSmallWavesElevation / i);
