@@ -1,8 +1,8 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import GUI from 'lil-gui'
-import waterVertexShader from './shaders/water/vertex.glsl'
-import waterFragmentShader from './shaders/water/fragment.glsl'
+import waterVertexShader from './shaders/water/normal/vertex.glsl'
+import waterFragmentShader from './shaders/water/normal/fragment.glsl'
 
 // console.log(waterVertexShader)
 // console.log(waterFragmentShader)
@@ -38,8 +38,8 @@ const waterMaterial = new THREE.ShaderMaterial({
     {
         uTime: { value: 0 },
         uBigWavesElevation: { value: 0.2 },
-        uBigWavesFrequency: { value: new THREE.Vector2(4, 1.5) },
-        uBigWavesSpeed: { value: 0.75 },
+        uBigWavesFrequency: { value: new THREE.Vector2(10, 1.5) }, // ４に戻す
+        uBigWavesSpeed: { value: 0.0 },    // 0.75に戻す
 
         uDepthColor: { value: new THREE.Color(debugObject.depthColor) },
         uSurfaceColor: { value: new THREE.Color(debugObject.surfaceColor) },

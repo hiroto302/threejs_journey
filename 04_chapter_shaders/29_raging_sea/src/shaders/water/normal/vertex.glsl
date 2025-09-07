@@ -42,10 +42,19 @@ void main()
         => (X軸の波) * (Z軸の波) * 波の振幅
 
     この手法は procedural wave generation（手続き的波生成）の基本的なテクニック。
+
+    面の頂点座標は -1 から +1 の範囲
+      X座標の範囲: -1.0 ← 中心(0) → +1.0
+      Z座標の範囲: -1.0 ← 中心(0) → +1.0
+
+    プログラミングのsin関数は ラジアン単位
+      1周期(360度) = 2πラジアン ≈ 6.28
+      float elevation = sin(modelPosition.x * uBigWavesFrequency.x のみの時、six(x)のグラフの通りの波形になる。見比べたら感動するよ。
   */
   float elevation = sin(modelPosition.x * uBigWavesFrequency.x + uTime * uBigWavesSpeed) *
-                    sin(modelPosition.z * uBigWavesFrequency.y + uTime * uBigWavesSpeed) *
-                    uBigWavesElevation;
+                    sin(modelPosition.z * uBigWavesFrequency.x + uTime * uBigWavesSpeed) *
+                    uBigWavesElevation
+                    ;
   // y座標（高さ）に波の変位を加算
   modelPosition.y += elevation;
 
