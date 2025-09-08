@@ -10,6 +10,8 @@ uniform float uSmallWavesIterations;
 
 varying float vElevation;
 
+// 参照: https://claude.ai/share/689a7751-7fc6-4e78-971c-dfd53769e3e9
+
 //	Classic Perlin 3D Noise
 //	by Stefan Gustavson (https://github.com/stegu/webgl-noise)
 // このc関数はClassic Perlin 3D Noiseの実装で、Stefan Gustavson氏の有名なwebgl-noiseライブラリ
@@ -122,12 +124,31 @@ void main()
 
   6. forループ
       uSmallWavesIterations回ループして、小波の影響を累積
-      これにより、より複雑で自然な波の表現が可能s
+      これにより、より複雑で自然な波の表現が可能
+
+    小波 と言っているが、これはは波の谷や細かい凹凸を作成しているイメージである。
+    Noise を利用すると、滑らかで自然なランダム値を生成できるため、波の形状にリアリズムを追加できる
   */
-  for (float i = 1.0; i <= uSmallWavesIterations; i++)
-  {
-    elevation -= (abs(cnoise(vec3(modelPosition.xz * uSmallWavesFrequency * i, uTime * uSmallWavesSpeed)) ) * uSmallWavesElevation / i);
-  }
+
+  // step1: なだらかな波の変化(sin波)に対して、ノイズを追加して小波を表現
+  // elevation += cnoise(vec3(modelPosition.xz * uSmallWavesFrequency, 0));
+
+  // step2: 引数3つ目に時間を入れて、波をアニメーション (elevation 作成時のアニメーションとは別に小波を動かすイメージ)
+  // elevation += cnoise(vec3(modelPosition.xz * uSmallWavesFrequency, uTime * uSmallWavesSpeed));
+
+  // step3: conoiseの結果に対して、高さを調整
+  // elevation += cnoise(vec3(modelPosition.xz * uSmallWavesFrequency, uTime * uSmallWavesSpeed)) * uSmallWavesElevation;
+
+  // step4: abs()で負の値を正に変換して、波が下に凹みを反転。その値を引くことで、波の谷や細かい凹を作成。結果的に、波の形状に近づく
+  // 前回までは、実際は 山の部分が連続するイメージだったが、谷の部分も作成されるイメージ
+  elevation -= abs(cnoise(vec3(modelPosition.xz * uSmallWavesFrequency, uTime * uSmallWavesSpeed)) * uSmallWavesElevation);
+
+
+  // step: final
+  // for (float i = 1.0; i <= uSmallWavesIterations; i++)
+  // {
+  //   elevation -= (abs(cnoise(vec3(modelPosition.xz * uSmallWavesFrequency * i, uTime * uSmallWavesSpeed)) ) * uSmallWavesElevation / i);
+  // }
 
   modelPosition.y += elevation;
 
