@@ -141,14 +141,26 @@ void main()
 
   // step4: abs()で負の値を正に変換して、波が下に凹みを反転。その値を引くことで、波の谷や細かい凹を作成。結果的に、波の形状に近づく
   // 前回までは、実際は 山の部分が連続するイメージだったが、谷の部分も作成されるイメージ
-  elevation -= abs(cnoise(vec3(modelPosition.xz * uSmallWavesFrequency, uTime * uSmallWavesSpeed)) * uSmallWavesElevation);
+  // elevation -= abs(cnoise(vec3(modelPosition.xz * uSmallWavesFrequency, uTime * uSmallWavesSpeed)) * uSmallWavesElevation);
 
-
-  // step: final
-  // for (float i = 1.0; i <= uSmallWavesIterations; i++)
+  // step5: 小波の影響をループで累積(step4の小波の中に小波を作成するイメージ)。1~3回ループの中で、それぞれ異なるcnoiseの値が生成されている。
+  // for (float i = 1.0; i <= 3.0; i++)
   // {
-  //   elevation -= (abs(cnoise(vec3(modelPosition.xz * uSmallWavesFrequency * i, uTime * uSmallWavesSpeed)) ) * uSmallWavesElevation / i);
+  //   elevation -= abs(cnoise(vec3(modelPosition.xz * uSmallWavesFrequency, uTime * uSmallWavesSpeed)) * uSmallWavesElevation);
   // }
+
+  // step6: 累積するだけど奇妙な動きになってしまうので、iを利用して、周波数(uSmallWavesFrequency)と振幅(uSmallWavesElevation)を調整
+  // ポイントは、周波数にiをかけることで、ループごとに周波数が高くなり（細かい波）、振幅をiで割ることで、ループごとに振幅が小さくなる（細かい波の影響が小さくなる）
+  // for (float i = 1.0; i <= 3.0; i++)
+  // {
+  //   elevation -= abs(cnoise(vec3(modelPosition.xz * uSmallWavesFrequency * i, uTime * uSmallWavesSpeed)) * uSmallWavesElevation / i);
+  // }
+
+  // step final : 美しい波の表現の完成！
+  for (float i = 1.0; i <= uSmallWavesIterations; i++)
+  {
+    elevation -= (abs(cnoise(vec3(modelPosition.xz * uSmallWavesFrequency * i, uTime * uSmallWavesSpeed)) ) * uSmallWavesElevation / i);
+  }
 
   modelPosition.y += elevation;
 
