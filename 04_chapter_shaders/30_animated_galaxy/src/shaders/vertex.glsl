@@ -1,3 +1,7 @@
+uniform float uSize;
+
+attribute float aScale;
+
 void main()
 {
   vec4 modelPosition = modelMatrix * vec4(position, 1.0);
@@ -5,5 +9,7 @@ void main()
   vec4 projectionPosition = projectionMatrix * viewPosition;
   gl_Position = projectionPosition;
 
-  gl_PointSize = 2.0;
+  gl_PointSize = uSize * aScale;
+  // Scale the size based on distance
+  gl_PointSize *= (1.0 / - viewPosition.z);
 }
