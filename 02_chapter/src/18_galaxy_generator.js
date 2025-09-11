@@ -48,7 +48,7 @@ const generateGalaxy = () =>
     step 1: Straight Line of center
     step 2: Straight Branches Shape
     step 3: Spin Branches Shape
-    step 4: Spin Branches Shape
+    step 4: Randomness Spin Branches Shape
     step 5: colors
     */
 
