@@ -1,5 +1,3 @@
-varying vec3 vPosition;
-
 /*NOTE: 使用する関数
   mod(x, y) ：
           x を y で割った余りを返す
@@ -15,20 +13,26 @@ varying vec3 vPosition;
           実際にxの3乗関数とか見てみるとわかりやすい。
 */
 
+uniform float uTime;
+
+varying vec3 vPosition;
 
 void main()
 {
-  // ③ Stripes
-  float stripes = mod(vPosition.y * 20.0, 1.0);
+  // ③ Stripes + animation
+  float stripes = mod((vPosition.y - uTime * 0.02) * 20.0, 1.0);
   // ④ Make stripes sharper
   stripes = pow(stripes, 3.0);
-  
+
 
   // ① Base color based on position → これはこれ可愛い!
   // gl_FragColor = vec4(vPosition, 1.0);
 
   // ② Stripes color
-  gl_FragColor = vec4(stripes, stripes, stripes, 1.0);
+  // gl_FragColor = vec4(stripes, stripes, stripes, 1.0);
+
+  // ⑤ Stripes alpha
+  gl_FragColor = vec4(0.0, 1.0, 1.0, stripes);
 
   #include <tonemapping_fragment>
   #include <colorspace_fragment>
