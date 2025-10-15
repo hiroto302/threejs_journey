@@ -59,6 +59,14 @@
     - Fresnel 効果の計算で、裏面の場合は法線ベクトルを反転させることで、正しい効果を得ることができる
       - 真裏は 1.0 値。(normal と viewDirection が同じ方向を向いている)
       - normalを反転させることで 0.0 を取得可能(normal と viewDirection が逆方向を向いている)
+
+  * Falloff
+    滑らかな減衰を作成するために使用
+    - float falloff = smoothstep(0.8, 0.0, fresnel);
+    - holographic *= falloff;
+      fresnel が 0.0 から 0.8 の範囲で、滑らかに 1.0 → 0.0 へフェードアウトさせる
+      0.0〜0.8 の範囲で徐々に減衰
+      0.8 以降は完全に 0.0 (消える)
 */
 
 uniform float uTime;
@@ -70,17 +78,18 @@ void main()
 {
   // Normal
   vec3 normal = normalize(vNormal);
-  // 裏面の場合、法線を反転
+
+  // ④裏面の場合、法線を反転
   if (!gl_FrontFacing) {
     normal *= -1.0;
   }
 
-  // Stripes
+  // ① Stripes
   float stripes = mod((vPosition.y - uTime * 0.02) * 20.0, 1.0);
   stripes = pow(stripes, 3.0);
 
 
-  // Fresnel effect
+  // ② Fresnel effect
   vec3 viewDirection = normalize(vPosition - cameraPosition);
   // +1.0 は 正面の頂点との計算では、-1.0 になるため、0.0 から始まるように調整。
     // 90度の所が0.0 が1.0 になる。
@@ -91,10 +100,15 @@ void main()
   fresnel = pow(fresnel, 2.0);
 
 
-  // Holographic (Combine Fresnel and stripes)
+  // ⑤ Falloff
+  float falloff = smoothstep(0.8, 0.0, fresnel);
+
+  // ③ Holographic (Combine Fresnel and stripes)
   float holographic = fresnel * stripes;
   // 少し明るくしたいので 1.25 倍
   holographic += fresnel * 1.25;
+  holographic *= falloff;
+
 
 
   // Final color with Fresnel effect
