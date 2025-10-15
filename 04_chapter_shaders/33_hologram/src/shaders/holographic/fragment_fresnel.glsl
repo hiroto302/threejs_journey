@@ -50,6 +50,15 @@
       正面は 0.0 から始まり、
       横が   1.0、
       真裏が 2.0 になる
+
+  * gl_FrontFacing
+    - フラグメントが表面に属しているか裏面に属しているかを判定する組み込み変数
+    - true なら表面、false なら裏面
+
+  * normal *= -1.0;
+    - Fresnel 効果の計算で、裏面の場合は法線ベクトルを反転させることで、正しい効果を得ることができる
+      - 真裏は 1.0 値。(normal と viewDirection が同じ方向を向いている)
+      - normalを反転させることで 0.0 を取得可能(normal と viewDirection が逆方向を向いている)
 */
 
 uniform float uTime;
@@ -61,6 +70,10 @@ void main()
 {
   // Normal
   vec3 normal = normalize(vNormal);
+  // 裏面の場合、法線を反転
+  if (!gl_FrontFacing) {
+    normal *= -1.0;
+  }
 
   // Stripes
   float stripes = mod((vPosition.y - uTime * 0.02) * 20.0, 1.0);
@@ -71,7 +84,7 @@ void main()
   vec3 viewDirection = normalize(vPosition - cameraPosition);
   // +1.0 は 正面の頂点との計算では、-1.0 になるため、0.0 から始まるように調整。
     // 90度の所が0.0 が1.0 になる。
-    // 180度(真裏)の所が1.0 が 2.0 になってしまうのは問題ない。
+    // 180度(真裏)の所が1.0 が 2.0 になってしまうので gl_FrontFacing を使って inverting する
   // float fresnel = dot(viewDirection, vNormal) + 1.0;
   float fresnel = dot(viewDirection, normal) + 1.0;
   // Pow で値を調整

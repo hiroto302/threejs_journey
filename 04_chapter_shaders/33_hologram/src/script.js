@@ -88,6 +88,14 @@ const material = new THREE.ShaderMaterial({
         uTime: new THREE.Uniform(0),
     },
     transparent: true,
+    // NOTE: 以下の設定はホログラム表現において重要な設定
+    // 背景も透過して表示するにあたり以下の設定を行う
+    // 裏表両方を描画
+    side: THREE.DoubleSide,
+    // 奥行き情報を無効にする → 煙の実装の時と同じで、透過ホログラムが自身の背後を描画できるようにする
+    depthWrite: false,
+    // 加算合成 → 重なりが明るくなる
+    blending: THREE.AdditiveBlending
 })
 
 /**
