@@ -70,6 +70,7 @@
 */
 
 uniform float uTime;
+uniform vec3 uColor;
 
 varying vec3 vPosition;
 varying vec3 vNormal;
@@ -114,7 +115,7 @@ void main()
   // Final color with Fresnel effect
   // gl_FragColor = vec4(0.0, 1.0, 1.0, stripes);
   // gl_FragColor = vec4(vNormal, 1.0);
-  gl_FragColor = vec4(1.0, 1.0, 1.0, holographic);
+  gl_FragColor = vec4(uColor, holographic);
 
   #include <tonemapping_fragment>
   #include <colorspace_fragment>

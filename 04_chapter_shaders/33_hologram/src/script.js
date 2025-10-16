@@ -80,12 +80,24 @@ gui
 /**
  * Material
  */
+
+// Color
+const materialParameters = {}
+materialParameters.color = '#00fffb'
+gui
+    .addColor(materialParameters, 'color')
+    .onChange(() =>
+    {
+        material.uniforms.uColor.value.set(materialParameters.color)
+    })
+
 const material = new THREE.ShaderMaterial({
     vertexShader: holographicVertexShader,
     fragmentShader: holographicFragmentShader,
     uniforms:
     {
         uTime: new THREE.Uniform(0),
+        uColor: new THREE.Uniform(new THREE.Color(materialParameters.color)),
     },
     transparent: true,
     // NOTE: 以下の設定はホログラム表現において重要な設定
