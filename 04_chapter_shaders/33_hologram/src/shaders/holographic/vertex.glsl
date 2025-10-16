@@ -59,12 +59,28 @@
     だから modelMatrix をかける時に 0.0 にすることで、回転とスケールだけ適用され、平行移動は無視される。
 */
 
+uniform float uTime;
+
 varying vec3 vPosition;
 varying vec3 vNormal;
+
+#include ../includes/random2D.glsl
 
 void main()
 {
   vec4 modelPosition = modelMatrix * vec4(position, 1.0);
+
+  // Glitch effect
+  float glitchTime = uTime - modelPosition.y;
+  // float glitchStrength = sin(glitchTime);       // ← 単純な sin 波を使った glitch アニメーション (-1.0 〜 1.0 の値を返す)  
+  float glitchStrength = sin(glitchTime)
+                        + sin(glitchTime * 3.45)
+                        + sin(glitchTime * 8.76);  // 複数の sin 波を組み合わせて、より複雑な glitch アニメーションに (-3.0 〜 3.0 の値を返す)
+  glitchStrength /= 3.0;                                  // -1.0 〜 1.0 の値を返す
+  glitchStrength *= smoothstep(0.3, 1.0, glitchStrength); // 0.3 までは glitch しない (-1.0 〜 0.3 の値を 0.0 にする)
+  glitchStrength *= 0.25;                                 // glitch の強さを調整 (0.0 〜 0.25 の値を返す)
+  modelPosition.x += (random2D(modelPosition.xz + uTime) - 0.5) * glitchStrength;  // X 軸に Glitch させる
+  modelPosition.z += (random2D(modelPosition.zx + uTime) - 0.5) * glitchStrength;  // Z 軸に Glitch させる
 
   // Final position
   gl_Position = projectionMatrix * viewMatrix * modelPosition;
