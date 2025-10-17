@@ -65,15 +65,43 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 /**
  * Fireworks
  */
-const createFirework = () =>
+const createFirework = (count, position) =>
 {
     // Geometry
-    const geometry = new THREE.SphereGeometry(0.1, 16, 16)
-    const material = new THREE.MeshBasicMaterial({ color: 0xffffff })
-    const firework = new THREE.Mesh(geometry, material)
-    scene.add(firework)
+    // const geometry = new THREE.SphereGeometry(0.1, 16, 16)
+    // const material = new THREE.MeshBasicMaterial({ color: 0xffffff })
+    // const firework = new THREE.Mesh(geometry, material)
+    // scene.add(firework)
+
+    const positionsArray = new Float32Array(count * 3)
+    for (let i = 0; i < count; i++)
+    {
+        const i3 = i * 3
+        positionsArray[i3 + 0] = (Math.random() - 0.5) * 1.0 // x
+        positionsArray[i3 + 1] = (Math.random() - 0.5) * 1.0 // y
+        positionsArray[i3 + 2] = (Math.random() - 0.5) * 1.0 // z
+
+        const geometry = new THREE.BufferGeometry()
+        geometry.setAttribute('position', new THREE.Float32BufferAttribute(positionsArray, 3))
+
+        // Material
+        const material = new THREE.PointsMaterial({
+            // size: 0.1,
+            // sizeAttenuation: true,
+            // color: new THREE.Color(`hsl(${Math.random() * 360}, 100%, 50%)`),
+            // transparent: true,
+            // alphaMap: textureLoader.load('/textures/particles/1.png'),
+            // depthWrite: false,
+            // blending: THREE.AdditiveBlending
+        })
+
+        // Points
+        const firework = new THREE.Points(geometry, material)
+        firework.position.copy(position)
+        scene.add(firework)
+    }
 }
-createFirework()
+createFirework(100, new THREE.Vector3())
 
 /**
  * Animate
