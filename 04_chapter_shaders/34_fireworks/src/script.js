@@ -1,6 +1,8 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import GUI from 'lil-gui'
+import fireworkVertexShader from './shaders/firework/vertex.glsl'
+import fireworkFragmentShader from './shaders/firework/fragment.glsl'
 
 /**
  * Base
@@ -65,14 +67,8 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 /**
  * Fireworks
  */
-const createFirework = (count, position) =>
+const createFirework = (count, position, size) =>
 {
-    // Geometry
-    // const geometry = new THREE.SphereGeometry(0.1, 16, 16)
-    // const material = new THREE.MeshBasicMaterial({ color: 0xffffff })
-    // const firework = new THREE.Mesh(geometry, material)
-    // scene.add(firework)
-
     const positionsArray = new Float32Array(count * 3)
     for (let i = 0; i < count; i++)
     {
@@ -85,7 +81,15 @@ const createFirework = (count, position) =>
         geometry.setAttribute('position', new THREE.Float32BufferAttribute(positionsArray, 3))
 
         // Material
-        const material = new THREE.PointsMaterial({
+        const material = new THREE.ShaderMaterial({
+            vertexShader: fireworkVertexShader,
+            fragmentShader: fireworkFragmentShader,
+            uniforms:
+            {
+                //TODO: adjust size based on your needs.
+                //NOTE: 画面の大きさに応じて調整する処理実装したい
+                uSize: new THREE.Uniform(size)
+            }
             // size: 0.1,
             // sizeAttenuation: true,
             // color: new THREE.Color(`hsl(${Math.random() * 360}, 100%, 50%)`),
@@ -101,7 +105,12 @@ const createFirework = (count, position) =>
         scene.add(firework)
     }
 }
-createFirework(100, new THREE.Vector3())
+
+createFirework(
+    100,                    // count
+    new THREE.Vector3(),    // position
+    20.0                    // size
+)
 
 /**
  * Animate
