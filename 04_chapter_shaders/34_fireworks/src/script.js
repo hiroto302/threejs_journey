@@ -87,7 +87,7 @@ const textures = [
     textureLoader.load('./particles/8.png'),
 ]
 
-const createFirework = (count, position, size, texture) =>
+const createFirework = (count, position, size, texture, radius) =>
 {
     // Geometry
     const positionsArray = new Float32Array(count * 3)
@@ -96,56 +96,78 @@ const createFirework = (count, position, size, texture) =>
     for (let i = 0; i < count; i++)
     {
         const i3 = i * 3
-        // Random position
-        positionsArray[i3 + 0] = (Math.random() - 0.5) * 1.0 // x
-        positionsArray[i3 + 1] = (Math.random() - 0.5) * 1.0 // y
-        positionsArray[i3 + 2] = (Math.random() - 0.5) * 1.0 // z
+
+        //NOTE: 正方形ではなく球状に広がるように変更
+        // const spherical = new THREE.Spherical(
+        //     radius * (0.75 + Math.random() * 0.25), // radius
+        //     Math.random() * Math.PI,                // phi
+        //     Math.random() * Math.PI * 2             // theta
+        // )
+        const spherical = new THREE.Spherical(
+            radius * (0.75 + Math.random() * 0.25),
+            Math.random() * Math.PI,
+            Math.random() * Math.PI * 2
+        )
+
+        const position = new THREE.Vector3()
+        position.setFromSpherical(spherical)
+
+        // Random position Box
+        // positionsArray[i3 + 0] = (Math.random() - 0.5) * 1.0 // x
+        // positionsArray[i3 + 1] = (Math.random() - 0.5) * 1.0 // y
+        // positionsArray[i3 + 2] = (Math.random() - 0.5) * 1.0 // z
+
+        // Spherical position
+        positionsArray[i3 + 0] = position.x // x
+        positionsArray[i3 + 1] = position.y // y
+        positionsArray[i3 + 2] = position.z // z
 
         // Random size
         sizesArray[i] = Math.random()
-
-        const geometry = new THREE.BufferGeometry()
-        geometry.setAttribute('position', new THREE.Float32BufferAttribute(positionsArray, 3))
-        geometry.setAttribute('aSize', new THREE.Float32BufferAttribute(sizesArray, 1))
-
-        // Material
-        texture.flipY = false
-        const material = new THREE.ShaderMaterial({
-            vertexShader: fireworkVertexShader,
-            fragmentShader: fireworkFragmentShader,
-            uniforms:
-            {
-                uSize: new THREE.Uniform(size),
-                //NOTE: adjust size based on your screen resolution
-                uResolution: new THREE.Uniform(sizes.resolution),
-                uTexture: new THREE.Uniform(texture)
-            },
-            //NOTE: パーティクルの描画設定
-            transparent: true,
-            depthWrite: false,
-            // blending: THREE.AdditiveBlending
-
-        })
-
-        // Points
-        const firework = new THREE.Points(geometry, material)
-        firework.position.copy(position)
-        scene.add(firework)
     }
+    const geometry = new THREE.BufferGeometry()
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(positionsArray, 3))
+    geometry.setAttribute('aSize', new THREE.Float32BufferAttribute(sizesArray, 1))
+
+    // Material
+    texture.flipY = false
+    const material = new THREE.ShaderMaterial({
+        vertexShader: fireworkVertexShader,
+        fragmentShader: fireworkFragmentShader,
+        uniforms:
+        {
+            uSize: new THREE.Uniform(size),
+            //NOTE: adjust size based on your screen resolution
+            uResolution: new THREE.Uniform(sizes.resolution),
+            uTexture: new THREE.Uniform(texture)
+        },
+        //NOTE: パーティクルの描画設定
+        transparent: true,
+        depthWrite: false,
+        // blending: THREE.AdditiveBlending
+
+    })
+
+    // Points
+    const firework = new THREE.Points(geometry, material)
+    firework.position.copy(position)
+    scene.add(firework)
 }
 
+
 createFirework(
-    100,                    // count
+    500,                    // count
     new THREE.Vector3(),    // position
     0.25,                   // size
-    textures[7]
+    textures[7],            // texture
+    1.0
 )
 
 /**
  * Animate
  */
 const tick = () =>
-{ 
+{
     // Update controls
     controls.update()
 
