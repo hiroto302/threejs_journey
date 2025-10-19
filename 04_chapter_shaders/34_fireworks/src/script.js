@@ -180,16 +180,18 @@ const createFirework = (count, position, size, texture, radius, color) =>
     )
 }
 
-
-
-createFirework(
+// Generate firework on click
+window.addEventListener('click', () =>
+{
+    createFirework(
     500,                            // count
     new THREE.Vector3(),            // position
     0.25,                           // size
     textures[7],                    // texture
     1.0,                            // radius
     new THREE.Color("#8affff")    // color
-)
+    )
+})
 
 /**
  * Animate
