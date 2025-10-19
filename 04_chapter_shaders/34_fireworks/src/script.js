@@ -185,17 +185,42 @@ const createFirework = (count, position, size, texture, radius, color) =>
     )
 }
 
+const createRandomFirework = () => {
+    const count = Math.round(400 + Math.random() * 1000)
+    const position = new THREE.Vector3(
+        (Math.random() - 0.5) * 2.0,
+        Math.random(),
+        (Math.random() - 0.5) * 2.0
+    )
+    const size = 0.1 + Math.random() * 0.1
+    const texture = textures[Math.floor(Math.random() * textures.length)]
+    const radius = 0.5 + Math.random()
+    const color = new THREE.Color()
+    color.setHSL(Math.random(), 1.0, 0.7)
+
+    createFirework(
+        count,
+        position,
+        size,
+        texture,
+        radius,
+        color
+    )
+}
+
 // Generate firework on click
 window.addEventListener('click', () =>
 {
-    createFirework(
-    500,                            // count
-    new THREE.Vector3(),            // position
-    0.25,                           // size
-    textures[7],                    // texture
-    1.0,                            // radius
-    new THREE.Color("#8affff")    // color
-    )
+    // createFirework(
+    // 500,                            // count
+    // new THREE.Vector3(),            // position
+    // 0.25,                           // size
+    // textures[7],                    // texture
+    // 1.0,                            // radius
+    // new THREE.Color("#8affff")    // color
+    // )
+
+    createRandomFirework()
 })
 
 /**
