@@ -87,7 +87,7 @@ const textures = [
     textureLoader.load('./particles/8.png'),
 ]
 
-const createFirework = (count, position, size, texture, radius) =>
+const createFirework = (count, position, size, texture, radius, color) =>
 {
     // Geometry
     const positionsArray = new Float32Array(count * 3)
@@ -139,13 +139,14 @@ const createFirework = (count, position, size, texture, radius) =>
             uSize: new THREE.Uniform(size),
             //NOTE: adjust size based on your screen resolution
             uResolution: new THREE.Uniform(sizes.resolution),
-            uTexture: new THREE.Uniform(texture)
+            uTexture: new THREE.Uniform(texture),
+            // Color
+            uColor: new THREE.Uniform(color)
         },
         //NOTE: パーティクルの描画設定
         transparent: true,
         depthWrite: false,
         // blending: THREE.AdditiveBlending
-
     })
 
     // Points
@@ -156,11 +157,13 @@ const createFirework = (count, position, size, texture, radius) =>
 
 
 createFirework(
-    500,                    // count
-    new THREE.Vector3(),    // position
-    0.25,                   // size
-    textures[7],            // texture
-    1.0
+    500,                            // count
+    new THREE.Vector3(),            // position
+    0.25,                           // size
+    textures[7],                    // texture
+    1.0,                            // radius
+    new THREE.Color("#8affff")    // color
+
 )
 
 /**
