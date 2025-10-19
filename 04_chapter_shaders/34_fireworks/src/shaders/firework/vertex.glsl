@@ -59,4 +59,10 @@ void main()
   // Final size
   gl_PointSize = uSize * uResolution.y * aSize * sizeProgress * sizeTwinkling;
   gl_PointSize *= 2.0 / - viewPosition.z;
+
+  // Discard small points
+  if(gl_PointSize < 1.0)
+  {
+    gl_Position = vec4(9999.9);
+  }
 }
