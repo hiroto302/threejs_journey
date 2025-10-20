@@ -129,6 +129,19 @@ gltfLoader.load(
 )
 
 /**
+ * Light helpers
+ */
+const directionalLightHelper = new THREE.Mesh(
+    new THREE.PlaneGeometry(),
+    new THREE.MeshBasicMaterial()
+)
+directionalLightHelper.material.color = new THREE.Color(0.1, 0.1, 1.0)
+directionalLightHelper.material.side = THREE.DoubleSide
+directionalLightHelper.position.set(0.0, 0.0, 3.0)
+scene.add(directionalLightHelper)
+
+
+/**
  * Animate
  */
 const clock = new THREE.Clock()
