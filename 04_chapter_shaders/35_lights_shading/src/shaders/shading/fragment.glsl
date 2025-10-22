@@ -12,6 +12,9 @@ varying vec3 vNormal;
 
         今回で言えば、反対方向を向いている箇所を一番明るく、0度に近い箇所を一番暗くしたい。反対面は全く影響
         を受けないよう表現を作成したい。
+
+        ただし、反対側の面の値が 0 ~ -1 の値なると、他の ambient light に対して負の影響を与えてしまうため、
+        0未満の値は全て0にクランプする。
 */
 vec3 directionalLight(vec3 lightColor, float lightIntensity, vec3 normal, vec3 lightPosition)
 {
@@ -19,6 +22,9 @@ vec3 directionalLight(vec3 lightColor, float lightIntensity, vec3 normal, vec3 l
 
     // Shading
     float shading = dot(normal, lightDirection);
+
+    // Clamp shading to be >= 0.0
+    shading = max(0.0, shading);
 
     return lightColor * lightIntensity * shading;
     // return vec3(shading);
@@ -30,9 +36,11 @@ void main()
 
     // Light
     vec3 light = vec3(0.0);
-    // light += ambientLight(
-    //     vec3(1.0, 1.0 , 1.0),   // Light color
-    //     0.03);                  // Light intensity
+
+    light += ambientLight(
+        vec3(1.0, 1.0 , 1.0),   // Light color
+        0.03);                  // Light intensity
+
     light += directionalLight(
         vec3(0.1, 0.1 , 1.0),
         1.0,
