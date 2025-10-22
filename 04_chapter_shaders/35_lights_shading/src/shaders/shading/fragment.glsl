@@ -1,4 +1,3 @@
-
 /*NOTE: lightPosition と pixelPosition への方向ベクトルと、法線ベクトルの内積を使って、
         ライトの影響度を計算する。
         内積の結果が1に近いほど、ライトは法線と同じ方向を向いており、
@@ -22,6 +21,26 @@
         lightDirection は ピクセルからライトへのベクトルなので、入射ベクトルとして使うには反転させる必要がある。
         そのため、「-lightDirection」 を使っている。
 */
+
+/*NOTE: Distance Decay (距離減衰)
+        Point Lightなどの場合、距離に基づく減衰を考慮する必要がある。
+        距離が遠くなるほど、光の強度が弱くなるように調整する。
+        これにより、リアルな照明効果が得られる。
+*/
+
+/*NOTE: Directional Light と Point Light の違い
+        Directional Light は、無限遠から来る平行な光線を表す。
+        そのため、距離減衰は考慮しない。
+        一方、Point Light は特定の位置から放射される光を表す。
+        そのため、距離減衰を考慮する必要がある。
+
+        また、lightDirection の計算方法も異なる。
+        Directional Light では、lightPosition ベクトルを正規化して使用する。
+        Point Light では、ピクセル位置からライト位置へのベクトルを計算し、正規化して使用する。
+        これは、Point Light が特定の位置から放射されるためである。
+*/
+
+
 uniform vec3 uColor;
 
 varying vec3 vNormal;
@@ -29,6 +48,7 @@ varying vec3 vPosition;
 
 #include ../includes/ambientLight.glsl
 #include ../includes/directionalLight.glsl
+#include ../includes/pointLight.glsl
 
 void main()
 {
@@ -38,13 +58,13 @@ void main()
 
     vec3 color = uColor;
 
-    // Light
+    // Lights
     vec3 light = vec3(0.0);
-
+    // Ambient Light
     light += ambientLight(
         vec3(1.0, 1.0 , 1.0),   // Light color
         0.03);                  // Light intensity
-
+    // Directional Light
     light += directionalLight(
         vec3(0.1, 0.1 , 1.0),   // Light color
         1.0,                    // Light intensity
@@ -52,6 +72,28 @@ void main()
         vec3(0.0, 0.0, 3.0),    // Light position
         viewDirection,          // Direction from camera to the pixel
         20.0                    // Specular power
+    );
+    // First Point Light
+    light += pointLight(
+        vec3(1.0, 0.1 , 0.1),   // Light color
+        1.0,                    // Light intensity
+        normal,                 // Normal
+        vec3(0.0, 2.5, 0.0),    // Light position
+        viewDirection,          // Direction from camera to the pixel
+        20.0,                   // Specular power
+        vPosition,              // Position
+        0.25                    // Light decay
+    );
+    // Second point light
+    light += pointLight(
+        vec3(0.1, 1.0, 0.5),    // Light color
+        1.0,                    // Light intensity
+        normal,                 // Normal
+        vec3(2.0, 2.0, 2.0),    // Light position
+        viewDirection,          // Direction from camera to the pixel
+        20.0,                   // Specular power
+        vPosition,              // Position
+        0.2                     // Light decay
     );
 
     // Combine light with base color
