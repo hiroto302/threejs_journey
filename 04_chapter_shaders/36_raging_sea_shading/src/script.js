@@ -18,15 +18,17 @@ const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
 
 // Axes Helper
-const axesHelper = new THREE.AxesHelper()
-axesHelper.position.y += 0.25;
-scene.add(axesHelper)
+// const axesHelper = new THREE.AxesHelper()
+// axesHelper.position.y += 0.25;
+// scene.add(axesHelper)
 
 /**
  * Water
  */
 // Geometry
 const waterGeometry = new THREE.PlaneGeometry(2, 2, 512, 512)
+waterGeometry.deleteAttribute('normal')
+waterGeometry.deleteAttribute('uv')
 
 // Colors
 debugObject.depthColor = '#ff4000'
@@ -39,7 +41,7 @@ gui.addColor(debugObject, 'surfaceColor').onChange(() => { waterMaterial.uniform
 const waterMaterial = new THREE.ShaderMaterial({
     vertexShader: waterVertexShader,
     fragmentShader: waterFragmentShader,
-    wireframe: true,
+    wireframe: false,
     uniforms:
     {
         uTime: { value: 0 },
@@ -97,6 +99,7 @@ window.addEventListener('resize', () =>
     camera.updateProjectionMatrix()
 
     // Update renderer
+    renderer.toneMapping = THREE.ACESFilmicToneMapping
     renderer.setSize(sizes.width, sizes.height)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 })

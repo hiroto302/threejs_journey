@@ -8,6 +8,7 @@ varying vec3 vNormal;
 varying vec3 vPosition;
 
 #include ../includes/directionalLight.glsl
+#include ../includes/pointLight.glsl
 
 void main()
 {
@@ -21,22 +22,32 @@ void main()
 
     // Light
     vec3 light = vec3(0.0);
-    light += directionalLight(
+    // light += directionalLight(
+    //     vec3(1.0),             // lightColor
+    //     1.0,                   // lightIntensity
+    //     normal,                // normal
+    //     vec3(-1.0, 0.5, 0.0),  // lightDirection
+    //     viewDirection,         // viewDirection
+    //     30.0                   // specularPower
+    // );
+    light += pointLight(
         vec3(1.0),             // lightColor
-        1.0,                   // lightIntensity
+        10.0,                  // lightIntensity
         normal,                // normal
-        vec3(-1.0, 0.5, 0.0),  // lightDirection
+        vec3(0.0, 0.25, 0.0),  // lightPosition
         viewDirection,         // viewDirection
-        30.0                   // specularPower
+        30.0,                  // specularPower
+        vPosition,             // position
+        0.95                   // lightDecay
     );
 
     // Apply light
     color *= light;
 
     // Final color
-    // gl_FragColor = vec4(color, 1.0);
+    gl_FragColor = vec4(color, 1.0);
     // gl_FragColor = vec4(vPosition, 1.0);
-    gl_FragColor = vec4(vNormal, 1.0);
+    // gl_FragColor = vec4(vNormal, 1.0);
     #include <tonemapping_fragment>
     #include <colorspace_fragment>
 }
