@@ -17,6 +17,11 @@ const canvas = document.querySelector('canvas.webgl')
 // Scene
 const scene = new THREE.Scene()
 
+// Axes Helper
+const axesHelper = new THREE.AxesHelper()
+axesHelper.position.y += 0.25;
+scene.add(axesHelper)
+
 /**
  * Water
  */
@@ -34,6 +39,7 @@ gui.addColor(debugObject, 'surfaceColor').onChange(() => { waterMaterial.uniform
 const waterMaterial = new THREE.ShaderMaterial({
     vertexShader: waterVertexShader,
     fragmentShader: waterFragmentShader,
+    wireframe: true,
     uniforms:
     {
         uTime: { value: 0 },
