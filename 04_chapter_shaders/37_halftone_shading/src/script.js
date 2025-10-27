@@ -88,6 +88,7 @@ gui
  */
 const materialParameters = {}
 materialParameters.color = '#ff794d'
+materialParameters.shadowColor = '#8e19b8'
 
 const material = new THREE.ShaderMaterial({
     vertexShader: halftoneVertexShader,
@@ -95,8 +96,9 @@ const material = new THREE.ShaderMaterial({
     uniforms:
     {
         uColor: new THREE.Uniform(new THREE.Color(materialParameters.color)),
-        uShadeColor: new THREE.Uniform(new THREE.Color(materialParameters.shadeColor)),
-        uResolution: new THREE.Uniform(new THREE.Vector2(sizes.width * sizes.pixelRatio, sizes.height * sizes.pixelRatio))
+        uResolution: new THREE.Uniform(new THREE.Vector2(sizes.width * sizes.pixelRatio, sizes.height * sizes.pixelRatio)),
+        uShadowRepetitions: new THREE.Uniform(100.0),
+        uShadowColor: new THREE.Uniform(new THREE.Color(materialParameters.shadowColor))
     }
 })
 
@@ -105,6 +107,20 @@ gui
     .onChange(() =>
     {
         material.uniforms.uColor.value.set(materialParameters.color)
+    })
+
+gui
+    .add(material.uniforms.uShadowRepetitions, 'value')
+    .min(10)
+    .max(300)
+    .step(1)
+    .name('shadow repetitions')
+
+gui
+    .addColor(materialParameters, 'shadowColor')
+    .onChange(() =>
+    {
+        material.uniforms.uShadowColor.value.set(materialParameters.shadowColor)
     })
 
 /**

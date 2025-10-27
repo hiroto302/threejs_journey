@@ -1,5 +1,7 @@
 uniform vec3 uColor;
 uniform vec2 uResolution;
+uniform float uShadowRepetitions;
+uniform vec3 uShadowColor;
 
 varying vec3 vNormal;
 varying vec3 vPosition;
@@ -90,12 +92,12 @@ void main()
     // use func halftone
     color = halftone(
         color,
-        30.0,
+        uShadowRepetitions,
         vec3(0.0, -1.0, 0.0),
         normal,
         - 0.8,
         1.5,
-        vec3(1.0, 0.0, 0.0)
+        uShadowColor
     );
 
     gl_FragColor = vec4(color, 1.0);
