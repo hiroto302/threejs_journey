@@ -1,3 +1,51 @@
+/* NOTE: GLSL の変数について
+
+    * GLSLの「組み込み変数(built-in variable)」組み込み変数の特徴
+        - GLSLがあらかじめ用意している変数
+        - シェーダー内で直接使用可能
+        - 定義不要
+        - 入力専用 or 出力専用 or 双方向
+        - シェーダーの種類(Vertex Shader / Fragment Shader)によって使用できる変数が異なる
+
+    * 組み込み変数・attribute・uniform・varying の役割
+    要素説明
+        * 組み込み変数(built-in variable)
+            GLSLがあらかじめ用意している変数
+            「主要な組み込み変数の種類」
+            Vertex Shader
+                - gl_Position : 頂点の最終的な位置(出力)
+            Fragment Shader
+                - gl_FragCoord : 現在のピクセルのスクリーン座標(入力・読み取り専用)
+                - gl_FragColor : ピクセルの最終的な色(出力)
+        * attribute
+            各頂点ごとのデータ
+                attribute vec3 position;  // 各頂点の位置
+                attribute vec3 normal;    // 各頂点の法線
+                attribute vec2 uv;        // 各頂点のUV座標
+            読み取り専用のため、一度変数に代入してから使用する
+                vec2 vUv = uv;
+                vec3 modelPosition = (modelMatrix * vec4(position, 1.0)).xyz;
+        * varying
+            頂点シェーダーからフラグメントシェーダーにデータを渡すための変数
+            頂点シェーダーで計算された値がフラグメントシェーダーで補間される
+                varying vec3 vNormal;     // 補間された法線
+                varying vec3 vPosition;   // 補間された位置
+        * uniform
+            シェーダー全体で共通のデータを渡すための変数
+            *自動的に提供される(定義不要!)ものもある
+                uniform mat4 modelMatrix;       // オブジェクトのローカル→ワールド変換
+                uniform mat4 modelViewMatrix;   // オブジェクトのローカル→ビュー変換
+                uniform mat4 projectionMatrix;  // ビュー→クリップ空間変換
+                uniform mat4 viewMatrix;        // ワールド→ビュー変換
+                uniform mat3 normalMatrix;      // 法線変換行列(逆転置行列)
+                uniform vec3 cameraPosition;    // カメラのワールド座標位置
+            *カスタム uniform は手動で定義
+                uColor: new THREE.Uniform(new THREE.Color('#ff794d')),
+                uResolution: new THREE.Uniform(new THREE.Vector2(800, 600)),
+                uTime: new THREE.Uniform(0),
+                uShadowRepetitions: new THREE.Uniform(100.0),
+*/
+
 uniform vec3 uColor;
 uniform vec2 uResolution;
 uniform float uShadowRepetitions;
