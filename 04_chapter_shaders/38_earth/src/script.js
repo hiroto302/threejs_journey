@@ -40,7 +40,8 @@ const earthMaterial = new THREE.ShaderMaterial({
     {
         uDayTexture: new THREE.Uniform(earthDayTexture),
         uNightTexture: new THREE.Uniform(earthNightTexture),
-        uSpecularTexture: new THREE.Uniform(earthSpecularTexture)
+        uSpecularTexture: new THREE.Uniform(earthSpecularTexture),
+        uSunDirection: new THREE.Uniform(new THREE.Vector3(0, 0, 1))
     }
 })
 const earth = new THREE.Mesh(earthGeometry, earthMaterial)
@@ -67,14 +68,23 @@ const updateSun = () => {
     debugSun.position.
         copy(sunDirection)
         .multiplyScalar(5)
+
+    // Uniforms
+    earthMaterial.uniforms.uSunDirection.value.copy(sunDirection)
 }
 updateSun()
 
 // Tweaks
 gui
     .add(sunSpherical, 'phi')
-    .min(0).max(Math.PI * 2)
-    .step(0.001).name('sun phi')
+    .min(0)
+    .max(Math.PI * 2)
+    .onChange(updateSun)
+
+gui
+    .add(sunSpherical, 'theta')
+    .min(- Math.PI)
+    .max(Math.PI)
     .onChange(updateSun)
 
 /**
