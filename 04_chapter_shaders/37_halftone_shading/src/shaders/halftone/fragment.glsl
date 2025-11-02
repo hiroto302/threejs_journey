@@ -215,7 +215,7 @@ void main()
 
     // Grid
     vec2 uv = gl_FragCoord.xy / uResolution.y;
-    uv = mod(uv * repetitions, 1.0);
+    uv = mod(uv * 50.0, 1.0);
 
     // Radius & Intensity
     float intensity = dot(normal, direction);
@@ -226,37 +226,37 @@ void main()
     point = 1.0 - step(0.5 * intensity, point);
 
     // Apply halftone
-    // color = mix(color, pointColor, point);
+    color = mix(color, pointColor, point);
 
     // Final color
-    // gl_FragColor = vec4(color, 1.0);
+    gl_FragColor = vec4(color, 1.0);
     // gl_FragColor = vec4(uv, 1.0, 1.0);
     // gl_FragColor = vec4(point, point, point, 1.0);
     // gl_FragColor = vec4(intensity, intensity, intensity, 1.0);
 
 
     // use func halftone
-    color = halftone(
-        color,
-        uShadowRepetitions,
-        vec3(0.0, -1.0, 0.0),
-        normal,
-        - 0.8,
-        1.5,
-        uShadowColor
-    );
+    // color = halftone(
+    //     color,
+    //     uShadowRepetitions,
+    //     vec3(0.0, -1.0, 0.0),
+    //     normal,
+    //     - 0.8,
+    //     1.5,
+    //     uShadowColor
+    // );
 
-    color += halftone(
-        color,
-        uLightRepetitions,
-        vec3(1.0, 1.0, 0.0),
-        normal,
-        0.5,
-        1.5,
-        uLightColor
-    );
+    // color += halftone(
+    //     color,
+    //     uLightRepetitions,
+    //     vec3(1.0, 1.0, 0.0),
+    //     normal,
+    //     0.5,
+    //     1.5,
+    //     uLightColor
+    // );
 
-    gl_FragColor = vec4(color, 1.0);
+    // gl_FragColor = vec4(color, 1.0);
 
     #include <tonemapping_fragment>
     #include <colorspace_fragment>

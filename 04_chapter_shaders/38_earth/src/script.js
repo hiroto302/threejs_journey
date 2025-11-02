@@ -47,6 +47,37 @@ const earth = new THREE.Mesh(earthGeometry, earthMaterial)
 scene.add(earth)
 
 /**
+ * Sun
+ */
+const sunSpherical = new THREE.Spherical( 2, Math.PI * 0.5)
+const sunDirection = new THREE.Vector3()
+
+// Debug
+const debugSun = new THREE.Mesh(
+    new THREE.IcosahedronGeometry(0.1, 2),
+    new THREE.MeshBasicMaterial()
+)
+scene.add(debugSun)
+
+const updateSun = () => {
+    // Sun direction
+    sunDirection.setFromSpherical(sunSpherical)
+
+    // Debug
+    debugSun.position.
+        copy(sunDirection)
+        .multiplyScalar(5)
+}
+updateSun()
+
+// Tweaks
+gui
+    .add(sunSpherical, 'phi')
+    .min(0).max(Math.PI * 2)
+    .step(0.001).name('sun phi')
+    .onChange(updateSun)
+
+/**
  * Sizes
  */
 const sizes = {
