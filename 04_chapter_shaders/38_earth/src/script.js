@@ -25,11 +25,14 @@ const textureLoader = new THREE.TextureLoader()
 // Textures
 const earthDayTexture = textureLoader.load('./earth/day.jpg')
 earthDayTexture.colorSpace = THREE.SRGBColorSpace
+earthDayTexture.anisotropy = 8
 
 const earthNightTexture = textureLoader.load('./earth/night.jpg')
 earthNightTexture.colorSpace = THREE.SRGBColorSpace
+earthNightTexture.anisotropy = 8
 
-const earthSpecularTexture = textureLoader.load('./earth/specularClouds.jpg')
+const earthSpecularCloudsTexture = textureLoader.load('./earth/specularClouds.jpg')
+earthSpecularCloudsTexture.anisotropy = 8
 
 // Mesh
 const earthGeometry = new THREE.SphereGeometry(2, 64, 64)
@@ -40,7 +43,7 @@ const earthMaterial = new THREE.ShaderMaterial({
     {
         uDayTexture: new THREE.Uniform(earthDayTexture),
         uNightTexture: new THREE.Uniform(earthNightTexture),
-        uSpecularTexture: new THREE.Uniform(earthSpecularTexture),
+        uSpecularTexture: new THREE.Uniform(earthSpecularCloudsTexture),
         uSunDirection: new THREE.Uniform(new THREE.Vector3(0, 0, 1))
     }
 })
@@ -136,6 +139,8 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(sizes.pixelRatio)
 renderer.setClearColor('#000011')
+
+// console.log(renderer.capabilities.getMaxAnisotropy())
 
 /**
  * Animate
