@@ -22,6 +22,26 @@ const textureLoader = new THREE.TextureLoader()
 /**
  * Earth
  */
+const earthParameters = {}
+earthParameters.atmosphereDayColor = "#00aaff"
+earthParameters.atmosphereTwilightColor = "#ff6600"
+
+gui
+    .addColor(earthParameters, 'atmosphereDayColor')
+    .name('Atmosphere Day Color')
+    .onChange(() =>
+    {
+        earthMaterial.uniforms.uAtmosphereDayColor.value.set(earthParameters.atmosphereDayColor)
+    })
+
+gui
+    .addColor(earthParameters, 'atmosphereTwilightColor')
+    .name('Atmosphere Twilight Color')
+    .onChange(() =>
+    {
+        earthMaterial.uniforms.uAtmosphereTwilightColor.value.set(earthParameters.atmosphereTwilightColor)
+    })
+
 // Textures
 const earthDayTexture = textureLoader.load('./earth/day.jpg')
 earthDayTexture.colorSpace = THREE.SRGBColorSpace
@@ -44,7 +64,9 @@ const earthMaterial = new THREE.ShaderMaterial({
         uDayTexture: new THREE.Uniform(earthDayTexture),
         uNightTexture: new THREE.Uniform(earthNightTexture),
         uSpecularTexture: new THREE.Uniform(earthSpecularCloudsTexture),
-        uSunDirection: new THREE.Uniform(new THREE.Vector3(0, 0, 1))
+        uSunDirection: new THREE.Uniform(new THREE.Vector3(0, 0, 1)),
+        uAtmosphereDayColor: new THREE.Uniform(new THREE.Color(earthParameters.atmosphereDayColor)),
+        uAtmosphereTwilightColor: new THREE.Uniform(new THREE.Color(earthParameters.atmosphereTwilightColor))
     }
 })
 const earth = new THREE.Mesh(earthGeometry, earthMaterial)
@@ -53,7 +75,7 @@ scene.add(earth)
 /**
  * Sun
  */
-const sunSpherical = new THREE.Spherical( 2, Math.PI * 0.5)
+const sunSpherical = new THREE.Spherical(2, Math.PI * 0.5, 0.5)
 const sunDirection = new THREE.Vector3()
 
 // Debug
