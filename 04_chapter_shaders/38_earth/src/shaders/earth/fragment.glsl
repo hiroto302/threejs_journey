@@ -18,31 +18,27 @@ void main()
     // Sun orientation
     float sunOrientation = dot(uSunDirection, normal);
 
-    // Day・Night textures of color
-    float dayMix = smoothstep(-0.25, 0.5, sunOrientation);
+    // Day / night color
+    float dayMix = smoothstep(- 0.25, 0.5, sunOrientation);
     vec3 dayColor = texture(uDayTexture, vUv).rgb;
     vec3 nightColor = texture(uNightTexture, vUv).rgb;
     color = mix(nightColor, dayColor, dayMix);
 
-    // Specular clouds texture (rチャンネル: 鏡面反射, gチャンネル: 雲の密度)
+    // Specular cloud color
     vec2 specularCloudsColor = texture(uSpecularCloudsTexture, vUv).rg;
 
     // Clouds
-    float cloudMix = smoothstep(0.5, 1.0, specularCloudsColor.g);
-    cloudMix *= dayMix;
-    color = mix(color, vec3(1.0), cloudMix);
+    float cloudsMix = smoothstep(0.5, 1.0, specularCloudsColor.g);
+    cloudsMix *= dayMix;
+    color = mix(color, vec3(1.0), cloudsMix);
 
     // Fresnel
     float fresnel = dot(viewDirection, normal) + 1.0;
     fresnel = pow(fresnel, 2.0);
-    // color = vec3(fresnel);
 
     // Atmosphere
-    float atmosphereDayMix = smoothstep(-0.5, 1.0, sunOrientation);
+    float atmosphereDayMix = smoothstep(- 0.5, 1.0, sunOrientation);
     vec3 atmosphereColor = mix(uAtmosphereTwilightColor, uAtmosphereDayColor, atmosphereDayMix);
-    // color = atmosphereColor;
-
-    // Combine atmosphere with Fresnel
     color = mix(color, atmosphereColor, fresnel * atmosphereDayMix);
 
     // Specular
@@ -50,6 +46,7 @@ void main()
     float specular = - dot(reflection, viewDirection);
     specular = max(specular, 0.0);
     specular = pow(specular, 32.0);
+    specular *= specularCloudsColor.r;
 
     vec3 specularColor = mix(vec3(1.0), atmosphereColor, fresnel);
     color += specular * specularColor;
