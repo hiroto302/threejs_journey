@@ -66,6 +66,18 @@ renderer.setClearColor('#181818')
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(sizes.pixelRatio)
 
+
+/**
+ * Displacement
+ */
+const displacement = {}
+
+// 2D canvas
+displacement.canvas = document.createElement('canvas')
+displacement.canvas.width = 128
+displacement.canvas.height = 128
+document.body.append(displacement.canvas)
+
 /**
  * Particles
  */
