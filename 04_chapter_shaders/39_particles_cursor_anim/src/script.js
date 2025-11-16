@@ -76,7 +76,28 @@ const displacement = {}
 displacement.canvas = document.createElement('canvas')
 displacement.canvas.width = 128
 displacement.canvas.height = 128
+displacement.canvas.style.position = 'fixed'
+displacement.canvas.style.width = '128px'
+displacement.canvas.style.height = '128px'
+displacement.canvas.style.top = '0'
+displacement.canvas.style.left = '0'
+displacement.canvas.style.zIndex = '10'
+displacement.canvas.style.border = '2px solid white'
 document.body.append(displacement.canvas)
+
+// Context
+displacement.context = displacement.canvas.getContext('2d')
+displacement.context.fillStyle = 'black'    // ← Set background style before fillRect
+displacement.context.fillRect(0, 0, displacement.canvas.width, displacement.canvas.height)
+
+// Glow image
+displacement.glowImage = new Image()
+displacement.glowImage.src = './glow.png'
+// window.setTimeout(() => {
+//     displacement.context.drawImage(displacement.glowImage, 0, 0, displacement.canvas.width, displacement.canvas.height)
+// }, 1000)
+
+
 
 /**
  * Particles
