@@ -97,7 +97,25 @@ displacement.glowImage.src = './glow.png'
 //     displacement.context.drawImage(displacement.glowImage, 0, 0, displacement.canvas.width, displacement.canvas.height)
 // }, 1000)
 
+// Interactive plane
+displacement.interactivePlane = new THREE.Mesh(
+    new THREE.PlaneGeometry(10, 10),
+    new THREE.MeshBasicMaterial({ color: 'red' })
+)
+scene.add(displacement.interactivePlane)
 
+// Raycaster
+displacement.raycaster = new THREE.Raycaster()
+displacement.screenCursor = new THREE.Vector2(9999, 9999)
+displacement.canvasCursor = new THREE.Vector2(0, 0)
+
+window.addEventListener('pointermove', (event) =>
+{
+    displacement.screenCursor.x = (event.clientX / sizes.width) * 2 - 1
+    displacement.screenCursor.y = - (event.clientY / sizes.height) * 2 + 1
+
+    console.log(displacement.screenCursor.x)
+})
 
 /**
  * Particles
@@ -124,6 +142,31 @@ const tick = () =>
 {
     // Update controls
     controls.update()
+
+    /* Raycaster */
+    displacement.raycaster.setFromCamera(displacement.screenCursor, camera)
+    const intersections = displacement.raycaster.intersectObject(displacement.interactivePlane)
+
+    if(intersections.length)
+    {
+        const uv = intersections[0].uv
+        // console.log(intersections[0])
+        console.log(uv)
+
+        displacement.canvasCursor.x = uv.x * displacement.canvas.width
+        displacement.canvasCursor.y = (1 - uv.y) * displacement.canvas.height
+    }
+
+    /* Displacement canvas update */
+    const glowSize = displacement.canvas.width * 0.25
+    displacement.context.globalCompositeOperation = 'lighten'
+    displacement.context.drawImage(
+        displacement.glowImage,
+        displacement.canvasCursor.x - glowSize * 0.5,
+        displacement.canvasCursor.y - glowSize * 0.5,
+        glowSize,
+        glowSize
+    )
 
     // Render
     renderer.render(scene, camera)
