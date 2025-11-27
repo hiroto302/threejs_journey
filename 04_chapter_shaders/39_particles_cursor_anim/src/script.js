@@ -118,6 +118,9 @@ window.addEventListener('pointermove', (event) =>
     console.log(displacement.screenCursor.x)
 })
 
+// Texture
+displacement.texture = new THREE.CanvasTexture(displacement.canvas)
+
 /**
  * Particles
  */
@@ -130,7 +133,8 @@ const particlesMaterial = new THREE.ShaderMaterial({
     uniforms:
     {
         uResolution: new THREE.Uniform(new THREE.Vector2(sizes.width * sizes.pixelRatio, sizes.height * sizes.pixelRatio)),
-        uPictureTexture: new THREE.Uniform(textureLoader.load('./picture-1.png'))
+        uPictureTexture: new THREE.Uniform(textureLoader.load('./picture-1.png')),
+        uDisplacementTexture: new THREE.Uniform(displacement.texture)
     }
 })
 const particles = new THREE.Points(particlesGeometry, particlesMaterial)
@@ -158,8 +162,6 @@ const tick = () =>
         displacement.canvasCursor.y = (1 - uv.y) * displacement.canvas.height
     }
 
-    
-
     /* Displacement */
     displacement.context.globalCompositeOperation = 'source-over'
     displacement.context.globalAlpha = 0.1
@@ -176,6 +178,9 @@ const tick = () =>
         glowSize,
         glowSize
     )
+
+    // Texture
+    displacement.texture.needsUpdate = true
 
     // Render
     renderer.render(scene, camera)
