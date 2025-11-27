@@ -13,8 +13,8 @@ void main()
     gl_Position = projectedPosition;
 
     // Picture
-    // float pictureIntensity = texture(uPictureTexture, uv).r;
-    float pictureIntensity = texture(uDisplacementTexture, uv).r;
+    float pictureIntensity = texture(uPictureTexture, uv).r;
+    // float pictureIntensity = texture(uDisplacementTexture, uv).r; ← test displacement texture
 
     // Point size
     gl_PointSize = 0.15 * pictureIntensity * uResolution.y;     // Adjust point size 0.15 to 0.15 based on plane geometry resolution
