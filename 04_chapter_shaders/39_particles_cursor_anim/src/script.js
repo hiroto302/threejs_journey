@@ -102,6 +102,7 @@ displacement.interactivePlane = new THREE.Mesh(
     new THREE.PlaneGeometry(10, 10),
     new THREE.MeshBasicMaterial({ color: 'red' })
 )
+displacement.interactivePlane.visible = false
 scene.add(displacement.interactivePlane)
 
 // Raycaster
@@ -157,9 +158,17 @@ const tick = () =>
         displacement.canvasCursor.y = (1 - uv.y) * displacement.canvas.height
     }
 
-    /* Displacement canvas update */
+    
+
+    /* Displacement */
+    displacement.context.globalCompositeOperation = 'source-over'
+    displacement.context.globalAlpha = 0.1
+    displacement.context.fillRect(0, 0, displacement.canvas.width, displacement.canvas.height)
+
+    // Draw glow
     const glowSize = displacement.canvas.width * 0.25
     displacement.context.globalCompositeOperation = 'lighten'
+    displacement.context.globalAlpha = 1.0
     displacement.context.drawImage(
         displacement.glowImage,
         displacement.canvasCursor.x - glowSize * 0.5,
