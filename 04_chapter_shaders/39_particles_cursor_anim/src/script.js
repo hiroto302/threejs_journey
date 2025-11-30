@@ -100,15 +100,18 @@ displacement.glowImage.src = './glow.png'
 // Interactive plane
 displacement.interactivePlane = new THREE.Mesh(
     new THREE.PlaneGeometry(10, 10),
-    new THREE.MeshBasicMaterial({ color: 'red' })
+    new THREE.MeshBasicMaterial({ color: 'red', side: THREE.DoubleSide })
 )
 displacement.interactivePlane.visible = false
 scene.add(displacement.interactivePlane)
 
 // Raycaster
 displacement.raycaster = new THREE.Raycaster()
+
+// Coordinates
 displacement.screenCursor = new THREE.Vector2(9999, 9999)
-displacement.canvasCursor = new THREE.Vector2(0, 0)
+displacement.canvasCursor = new THREE.Vector2(9999, 9999)
+displacement.canvasCursorPrevious = new THREE.Vector2(9999, 9999)
 
 window.addEventListener('pointermove', (event) =>
 {
@@ -182,10 +185,17 @@ const tick = () =>
     displacement.context.globalAlpha = 0.1
     displacement.context.fillRect(0, 0, displacement.canvas.width, displacement.canvas.height)
 
+    // Speed alpha
+    const cursorDistance = displacement.canvasCursorPrevious.distanceTo(displacement.canvasCursor)
+    displacement.canvasCursorPrevious.copy(displacement.canvasCursor)
+    const alpha = Math.min(cursorDistance * 0.1, 1.0)
+    console.log(cursorDistance)
+
+
     // Draw glow
     const glowSize = displacement.canvas.width * 0.25
     displacement.context.globalCompositeOperation = 'lighten'
-    displacement.context.globalAlpha = 1.0
+    displacement.context.globalAlpha = alpha
     displacement.context.drawImage(
         displacement.glowImage,
         displacement.canvasCursor.x - glowSize * 0.5,
