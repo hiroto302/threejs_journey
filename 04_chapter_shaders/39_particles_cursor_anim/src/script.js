@@ -66,7 +66,6 @@ renderer.setClearColor('#181818')
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(sizes.pixelRatio)
 
-
 /**
  * Displacement
  */
@@ -93,9 +92,6 @@ displacement.context.fillRect(0, 0, displacement.canvas.width, displacement.canv
 // Glow image
 displacement.glowImage = new Image()
 displacement.glowImage.src = './glow.png'
-// window.setTimeout(() => {
-//     displacement.context.drawImage(displacement.glowImage, 0, 0, displacement.canvas.width, displacement.canvas.height)
-// }, 1000)
 
 // Interactive plane
 displacement.interactivePlane = new THREE.Mesh(
@@ -127,21 +123,20 @@ displacement.texture = new THREE.CanvasTexture(displacement.canvas)
 /**
  * Particles
  */
-// const particlesGeometry = new THREE.PlaneGeometry(10, 10, 32, 32)    // lower res
-const particlesGeometry = new THREE.PlaneGeometry(10, 10, 128, 128)     // higher res
+const particlesGeometry = new THREE.PlaneGeometry(10, 10, 128, 128)
 particlesGeometry.setIndex(null)
 particlesGeometry.deleteAttribute('normal')
 
-const intensityArray = new Float32Array(particlesGeometry.attributes.position.count)
+const intensitiesArray = new Float32Array(particlesGeometry.attributes.position.count)
 const anglesArray = new Float32Array(particlesGeometry.attributes.position.count)
 
-for (let i = 0; i < particlesGeometry.attributes.position.count; i++)
+for(let i = 0; i < particlesGeometry.attributes.position.count; i++)
 {
-    intensityArray[i] = Math.random();
-    anglesArray[i] = Math.random() * Math.PI * 2;
+    intensitiesArray[i] = Math.random()
+    anglesArray[i] = Math.random() * Math.PI * 2
 }
 
-particlesGeometry.setAttribute('aIntensity', new THREE.BufferAttribute(intensityArray, 1))
+particlesGeometry.setAttribute('aIntensity', new THREE.BufferAttribute(intensitiesArray, 1))
 particlesGeometry.setAttribute('aAngle', new THREE.BufferAttribute(anglesArray, 1))
 
 const particlesMaterial = new THREE.ShaderMaterial({
@@ -166,31 +161,32 @@ const tick = () =>
     // Update controls
     controls.update()
 
-    /* Raycaster */
+    /**
+     * Raycaster
+     */
     displacement.raycaster.setFromCamera(displacement.screenCursor, camera)
     const intersections = displacement.raycaster.intersectObject(displacement.interactivePlane)
 
     if(intersections.length)
     {
         const uv = intersections[0].uv
-        // console.log(intersections[0])
-        console.log(uv)
-
+        
         displacement.canvasCursor.x = uv.x * displacement.canvas.width
         displacement.canvasCursor.y = (1 - uv.y) * displacement.canvas.height
     }
 
-    /* Displacement */
+    /**
+     * Displacement
+     */
+    // Fade out
     displacement.context.globalCompositeOperation = 'source-over'
-    displacement.context.globalAlpha = 0.1
+    displacement.context.globalAlpha = 0.02
     displacement.context.fillRect(0, 0, displacement.canvas.width, displacement.canvas.height)
 
     // Speed alpha
     const cursorDistance = displacement.canvasCursorPrevious.distanceTo(displacement.canvasCursor)
     displacement.canvasCursorPrevious.copy(displacement.canvasCursor)
-    const alpha = Math.min(cursorDistance * 0.1, 1.0)
-    console.log(cursorDistance)
-
+    const alpha = Math.min(cursorDistance * 0.05, 1)
 
     // Draw glow
     const glowSize = displacement.canvas.width * 0.25
