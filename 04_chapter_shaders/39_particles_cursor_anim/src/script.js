@@ -209,18 +209,30 @@ displacement.texture = new THREE.CanvasTexture(displacement.canvas)
  * Particles
  */
 const particlesGeometry = new THREE.PlaneGeometry(10, 10, 128, 128)
+/* Shader で使わない属性を削除して軽量化
+    * setIndex(null)
+        PlaneGeometry は三角形のポリゴン（面）として描画するために「どの点とどの点を繋ぐか」という情報（インデックス）を持っています。
+        しかし、今回は「点（Points）」としてバラバラに描画するので、「繋ぎ方」の情報は不要です。削除してメモリを節約します。
+
+    * deleteAttribute('normal')
+        PlaneGeometry は光の当たり方の計算で利用する「法線ベクトル（normal）」という情報を持っています。
+        しかし、今回は normal を活用した計算をしないので、この情報は不要です。削除してメモリを節約します。
+*/
 particlesGeometry.setIndex(null)
 particlesGeometry.deleteAttribute('normal')
 
+// Vertex shader で使用する変数の強度を、各頂点ごとにランダムに求める。Attributeは頂点ごとのデータを格納するための仕組みだったよね。
+// 1. 頂点の数だけ配列を作成
 const intensitiesArray = new Float32Array(particlesGeometry.attributes.position.count)
 const anglesArray = new Float32Array(particlesGeometry.attributes.position.count)
-
+// 2. 配列にランダムな値をセット
 for(let i = 0; i < particlesGeometry.attributes.position.count; i++)
 {
     intensitiesArray[i] = Math.random()
     anglesArray[i] = Math.random() * Math.PI * 2
 }
-
+// 3. BufferAttributeとしてジオメトリに追加
+// BufferAttribute(..., 1) の 1 は、「1つの頂点につきデータ1個（float）」という意味
 particlesGeometry.setAttribute('aIntensity', new THREE.BufferAttribute(intensitiesArray, 1))
 particlesGeometry.setAttribute('aAngle', new THREE.BufferAttribute(anglesArray, 1))
 
@@ -231,10 +243,18 @@ const particlesMaterial = new THREE.ShaderMaterial({
     {
         uResolution: new THREE.Uniform(new THREE.Vector2(sizes.width * sizes.pixelRatio, sizes.height * sizes.pixelRatio)),
         uPictureTexture: new THREE.Uniform(textureLoader.load('./picture-1.png')),
+        // マウスの軌跡が描かれた黒いキャンバスをテクスチャとして渡しています。Shader はこの画像を読み込んで、「白い部分＝マウスがいる場所」と判断
         uDisplacementTexture: new THREE.Uniform(displacement.texture)
     },
+    // AdditiveBlending (加算): 重なれば重なるほど明るくなる。パーティクル表現に適している。
     blending: THREE.AdditiveBlending
 })
+/* Mesh と Points の違い
+    Mesh: 面として描画。ジオメトリの頂点を三角形で繋いでポリゴンを形成する。
+    Points: 点として描画。ジオメトリの頂点をバラバラに表示する。
+        Points を使うと、Vertex Shader で gl_PointSize という特別な変数を使って、点ごとのサイズを制御可能
+        パーティクルの表現に適している
+*/
 const particles = new THREE.Points(particlesGeometry, particlesMaterial)
 scene.add(particles)
 
