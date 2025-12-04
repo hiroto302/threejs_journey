@@ -10,9 +10,6 @@
         cos(aAngle), sin(aAngle) を使って、ランダムな方向にパーティクルを動かす。
         これにより、パーティクルが均一に広がり、自然な動きが生まれる。
         円周上の方向を作ります。これでパーティクルは中心から放射状に散らばります。
-
-    
-
 */
 
 uniform vec2 uResolution;
@@ -60,8 +57,8 @@ void main()
 
     // Point size
     gl_PointSize = 0.15 * pictureIntensity * uResolution.y;     // Adjust point size 0.15 to 0.15 based on plane geometry resolution
-    gl_PointSize *= (1.0 / - viewPosition.z);
+    gl_PointSize *= (1.0 / - viewPosition.z);                   // 前面に来るほど大きくする
 
     // Varyings
-    vColor = vec3(pow(pictureIntensity, 2.0));
+    vColor = vec3(pow(pictureIntensity, 2.0));                  // 中間色を暗く引き締め、コントラストを高くする
 }
