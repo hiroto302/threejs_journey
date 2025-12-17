@@ -172,7 +172,14 @@ gltfLoader.load('./models.glb', (gltf) =>
 
     // Points
     particles.points = new THREE.Points(particles.geometry, particles.material)
+    particles.points.frustumCulled = false
     scene.add(particles.points)
+
+    // bounding & frustrum culling fix
+    // window.requestAnimationFrame(() =>
+    // {
+    //     console.log(particles.points.geometry.boundingSphere)
+    // })
 
     // Methods
     particles.morphTo = (index) =>
