@@ -139,9 +139,16 @@ gltfLoader.load('./models.glb', (gltf) =>
     console.log(positions)
 
     // Geometry
+    const sizeArray = new Float32Array(particles.maxCount)
+    for(let i = 0; i < particles.maxCount; i++)
+    {
+        sizeArray[i] = Math.random()
+    }
+
     particles.geometry = new THREE.SphereGeometry(3)
     particles.geometry.setAttribute('position', particles.positions[particles.index])
     particles.geometry.setAttribute('aPositionTarget', particles.positions[3])
+    particles.geometry.setAttribute('aSize', new THREE.Float32BufferAttribute(sizeArray, 1))
     particles.geometry.setIndex(null)
 
     // Material
@@ -150,7 +157,7 @@ gltfLoader.load('./models.glb', (gltf) =>
         fragmentShader: particlesFragmentShader,
         uniforms:
         {
-            uSize: new THREE.Uniform(0.2),
+            uSize: new THREE.Uniform(0.3),
             uResolution: new THREE.Uniform(new THREE.Vector2(sizes.width * sizes.pixelRatio, sizes.height * sizes.pixelRatio)),
             uProgress: new THREE.Uniform(0.0),
         },
