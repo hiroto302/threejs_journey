@@ -93,6 +93,7 @@ let particles = null
 gltfLoader.load('./models.glb', (gltf) =>
 {
     particles = {}
+    particles.index = 0
 
     // Positions
     const positions = gltf.scene.children.map(child => child.geometry.attributes.position)
@@ -139,7 +140,7 @@ gltfLoader.load('./models.glb', (gltf) =>
 
     // Geometry
     particles.geometry = new THREE.SphereGeometry(3)
-    particles.geometry.setAttribute('position', particles.positions[1])
+    particles.geometry.setAttribute('position', particles.positions[particles.index])
     particles.geometry.setAttribute('aPositionTarget', particles.positions[3])
     particles.geometry.setIndex(null)
 
@@ -162,8 +163,36 @@ gltfLoader.load('./models.glb', (gltf) =>
     particles.points = new THREE.Points(particles.geometry, particles.material)
     scene.add(particles.points)
 
+    // Methods
+    particles.morphTo = (index) =>
+    {
+        // Update attributes
+        particles.geometry.attributes.position = particles.positions[particles.index]
+        particles.geometry.attributes.aPositionTarget = particles.positions[index]
+
+        // Animation uProgress
+        gsap.fromTo(
+            particles.material.uniforms.uProgress,
+            { value: 0 },
+            { value: 1, duration: 3.0, ease: 'linear' }
+        )
+
+        // Save index
+        particles.index = index
+    }
+    particles.morph0 = () => { particles.morphTo(0) }
+    particles.morph1 = () => { particles.morphTo(1) }
+    particles.morph2 = () => { particles.morphTo(2) }
+    particles.morph3 = () => { particles.morphTo(3) }
+
+
     // Tweaks
-    gui.add(particles.material.uniforms.uProgress, 'value', 0, 1, 0.01).name('uProgress')
+    gui.add(particles.material.uniforms.uProgress, 'value', 0, 1, 0.01).name('uProgress').listen()
+
+    gui.add(particles, 'morph0').name('Morph to 0')
+    gui.add(particles, 'morph1').name('Morph to 1')
+    gui.add(particles, 'morph2').name('Morph to 2')
+    gui.add(particles, 'morph3').name('Morph to 3')
 })
 
 /**
