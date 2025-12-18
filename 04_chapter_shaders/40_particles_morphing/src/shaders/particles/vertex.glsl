@@ -19,10 +19,11 @@ void main()
     float noise = mix(noiseOrigin, noiseTarget, uProgress);
     noise = smoothstep(-1.0, 1.0, noise);
 
+    // Timing for morphing
     float duration = 0.4;
     float delay = (1.0 - duration) * noise;
     float end = delay + duration;
-
+    // Compute progress with smoothstep
     float progress = smoothstep(delay, end, uProgress);
     vec3 mixedPosition = mix(position, aPositionTarget, progress);
 
