@@ -1,3 +1,35 @@
+/* NOTE: 実装メモ
+    *THREE.Points
+        オブジェクトを粒子(パーティクル)の集合として表示するためのクラス
+        ジオメトリの各頂点を個別の点として描画する
+
+        Mesh の場合:
+            頂点 → 三角形 → 面(ソリッド)
+        Points の場合:
+            頂点 → 個別の点(四角いスプライト) → 各点が独立したスプライト
+
+    * material settings
+        * blending: THREE.AdditiveBlending
+            加算合成モード。パーティクルが重なると明るくなる効果を生む
+        * depthWrite: false
+            透明な時、後ろのパーティクルが描画されるようにする
+        * transparent: true
+            透明度を有効にする
+
+    * particle.geometry.setIndex(null)
+        インデックスバッファを無効にすることで、ジオメトリの各頂点が個別に描画されるようにする
+        Points ではインデックスバッファは不要
+
+    * 今回使用するmodels.glbについて
+        4つの異なる形状(モデル)が含まれている
+
+        gltf.scene.children.map(child => console.log(child.geometry.attributes.position))
+            これにより、各形状の頂点情報を確認できる
+
+    * Float32Array を Three.js のジオメトリで使えるBufferAttribute形式に変換
+        new THREE.Float32BufferAttribute(newArray, 3)
+*/
+
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
@@ -92,12 +124,18 @@ renderer.setClearColor(debugObject.clearColor)
 let particles = null
 gltfLoader.load('./models.glb', (gltf) =>
 {
+    // Object < scene < children に4つのメッシュが含まれていることを確認
+    // console.log(gltf)
+
     particles = {}
     particles.index = 0
 
+    gltf.scene.children.map(child => console.log(child.geometry.attributes.position))
+
     // Positions
     const positions = gltf.scene.children.map(child => child.geometry.attributes.position)
-
+    console.log(positions)
+    // ここで各形状の頂点数を確認して、最大頂点数を取得する
     particles.maxCount = 0
     for(const position of positions)
     {
@@ -106,7 +144,7 @@ gltfLoader.load('./models.glb', (gltf) =>
             particles.maxCount = position.count
         }
     }
-    console.log(particles.maxCount)
+    // console.log(particles.maxCount)
 
     particles.positions = []
     for (const position of positions)
@@ -126,6 +164,7 @@ gltfLoader.load('./models.glb', (gltf) =>
             }
             else
             {
+                // 足りない分はランダムに既存の頂点をコピーして補完
                 const randomIndex = Math.floor(position.count * Math.random()) * 3
                 newArray[i3 + 0] = originalArray[randomIndex + 0]
                 newArray[i3 + 1] = originalArray[randomIndex + 1]
@@ -136,7 +175,7 @@ gltfLoader.load('./models.glb', (gltf) =>
         particles.positions.push(new THREE.Float32BufferAttribute(newArray, 3))
     }
 
-    console.log(positions)
+    console.log(particles.positions)
 
     // Geometry
     const sizeArray = new Float32Array(particles.maxCount)
@@ -145,7 +184,8 @@ gltfLoader.load('./models.glb', (gltf) =>
         sizeArray[i] = Math.random()
     }
 
-    particles.geometry = new THREE.SphereGeometry(3)
+    // particles.geometry = new THREE.SphereGeometry(3)
+    particles.geometry = new THREE.BufferGeometry()
     particles.geometry.setAttribute('position', particles.positions[particles.index])
     particles.geometry.setAttribute('aPositionTarget', particles.positions[3])
     particles.geometry.setAttribute('aSize', new THREE.Float32BufferAttribute(sizeArray, 1))
