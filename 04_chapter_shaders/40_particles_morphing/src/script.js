@@ -221,7 +221,7 @@ gltfLoader.load('./models.glb', (gltf) =>
     //     console.log(particles.points.geometry.boundingSphere)
     // })
 
-    // Methods
+    // Methods ← gui 上から4つのボタンを追加して形状を切り替えられるようにする
     particles.morphTo = (index) =>
     {
         // Update attributes
@@ -254,6 +254,7 @@ gltfLoader.load('./models.glb', (gltf) =>
         particles.material.uniforms.uColorB.value.set(particles.colorB)
     })
 
+    // listen uProgress
     gui.add(particles.material.uniforms.uProgress, 'value', 0, 1, 0.01).name('uProgress').listen()
 
     gui.add(particles, 'morph0').name('Morph to 0')
