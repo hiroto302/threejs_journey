@@ -106,5 +106,5 @@ void main()
     gl_PointSize *= (1.0 / - viewPosition.z);
 
     // varyings
-    vColor = mix(uColorA, uColorB, noise);
+    vColor = mix(uColorA, uColorB, noise); // Color gradient based on noise
 }

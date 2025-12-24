@@ -178,6 +178,7 @@ gltfLoader.load('./models.glb', (gltf) =>
     console.log(particles.positions)
 
     // Geometry
+    // Radom size particles
     const sizeArray = new Float32Array(particles.maxCount)
     for(let i = 0; i < particles.maxCount; i++)
     {
@@ -192,6 +193,7 @@ gltfLoader.load('./models.glb', (gltf) =>
     particles.geometry.setIndex(null)
 
     // Material
+    // Color Gradient
     particles.colorA = '#8a188c'
     particles.colorB = '#0091ff'
     particles.material = new THREE.ShaderMaterial({
