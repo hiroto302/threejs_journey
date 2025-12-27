@@ -79,13 +79,20 @@ renderer.setPixelRatio(sizes.pixelRatio)
 debugObject.clearColor = '#29191f'
 renderer.setClearColor(debugObject.clearColor)
 
+
+/**
+ * Base geometry
+ */
+const baseGeometry = {}
+baseGeometry.instance = new THREE.SphereGeometry(3)
+baseGeometry.count = baseGeometry.instance.attributes.position.count
+
 /**
  * Particles
  */
 const particles = {}
 
-// Geometry
-particles.geometry = new THREE.SphereGeometry(3)
+
 
 // Material
 particles.material = new THREE.ShaderMaterial({
@@ -99,7 +106,7 @@ particles.material = new THREE.ShaderMaterial({
 })
 
 // Points
-particles.points = new THREE.Points(particles.geometry, particles.material)
+particles.points = new THREE.Points(baseGeometry.instance, particles.material)
 scene.add(particles.points)
 
 /**
