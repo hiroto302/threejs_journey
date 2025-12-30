@@ -2,9 +2,11 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js'
+import { GPUComputationRenderer } from 'three/addons/misc/GPUComputationRenderer.js'
 import GUI from 'lil-gui'
 import particlesVertexShader from './shaders/particles/vertex.glsl'
 import particlesFragmentShader from './shaders/particles/fragment.glsl'
+import gpgpuParticlesShader from './shaders/gpgpu/particles.glsl'
 
 /**
  * Base
@@ -86,6 +88,26 @@ renderer.setClearColor(debugObject.clearColor)
 const baseGeometry = {}
 baseGeometry.instance = new THREE.SphereGeometry(3)
 baseGeometry.count = baseGeometry.instance.attributes.position.count
+
+/**
+ * GPU Compute
+ */
+// Setup
+const gpgpu = {}
+gpgpu.size = Math.ceil(Math.sqrt(baseGeometry.count))
+// console.log('GPGPU Size:', gpgpu.size)
+gpgpu.computation = new GPUComputationRenderer(gpgpu.size, gpgpu.size, renderer)
+
+// Base particles
+const baseParticlesTexture = gpgpu.computation.createTexture()
+// console.log('Base Particles Texture:', baseParticlesTexture.image.data)
+
+// Particles variable
+gpgpu.particlesVariable = gpgpu.computation.addVariable(
+    'uParticles',
+    gpgpuParticlesShader,
+    baseParticlesTexture
+)
 
 /**
  * Particles
