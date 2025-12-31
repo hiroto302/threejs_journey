@@ -102,12 +102,42 @@ gpgpu.computation = new GPUComputationRenderer(gpgpu.size, gpgpu.size, renderer)
 const baseParticlesTexture = gpgpu.computation.createTexture()
 // console.log('Base Particles Texture:', baseParticlesTexture.image.data)
 
+for(let i = 0; i < baseGeometry.count; i++)
+{
+    const i3 = i * 3
+    const i4 = i * 4
+
+    // Position based on geometry
+    baseParticlesTexture.image.data[i4 + 0] = baseGeometry.instance.attributes.position.array[i3 + 0]
+    baseParticlesTexture.image.data[i4 + 1] = baseGeometry.instance.attributes.position.array[i3 + 1]
+    baseParticlesTexture.image.data[i4 + 2] = baseGeometry.instance.attributes.position.array[i3 + 2]
+    baseParticlesTexture.image.data[i4 + 3] = 0
+}
+// console.log('Updated Base Particles Texture:', baseParticlesTexture.image.data)
+
 // Particles variable
 gpgpu.particlesVariable = gpgpu.computation.addVariable(
     'uParticles',
     gpgpuParticlesShader,
     baseParticlesTexture
 )
+gpgpu.computation.setVariableDependencies(gpgpu.particlesVariable, [gpgpu.particlesVariable])
+
+// Init
+gpgpu.computation.init()
+
+// Debug
+gpgpu.debug = new THREE.Mesh(
+    new THREE.PlaneGeometry(3, 3),
+    new THREE.MeshBasicMaterial(
+        { map: gpgpu.computation.getCurrentRenderTarget(gpgpu.particlesVariable).texture }
+    )
+)
+// console.log(gpgpu.computation.getCurrentRenderTarget(gpgpu.particlesVariable).texture)
+gpgpu.debug.position.x = 3
+scene.add(gpgpu.debug)
+
+
 
 /**
  * Particles
@@ -148,9 +178,12 @@ const tick = () =>
     const elapsedTime = clock.getElapsedTime()
     const deltaTime = elapsedTime - previousTime
     previousTime = elapsedTime
-    
+
     // Update controls
     controls.update()
+
+    // GPGPU update
+    gpgpu.computation.compute()
 
     // Render normal scene
     renderer.render(scene, camera)
