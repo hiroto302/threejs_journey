@@ -152,11 +152,21 @@ for (let y = 0; y < gpgpu.size; y++)
     for (let x = 0; x < gpgpu.size; x++)
     {
         const i = y * gpgpu.size + x
+        const i2 = i * 2
+
+        const uvX = (x + 0.5) / gpgpu.size
+        const uvY = (y + 0.5) / gpgpu.size
+        // console.log(uvX)
+
+        particlesUvArray[i2 + 0] = uvX
+        particlesUvArray[i2 + 1] = uvY
     }
 }
+// console.log(particlesUvArray)
 
 particles.geometry = new THREE.BufferGeometry()
 particles.geometry.setDrawRange(0, baseGeometry.count)
+particles.geometry.setAttribute('aParticlesUv', new THREE.BufferAttribute(particlesUvArray, 2))
 
 
 
