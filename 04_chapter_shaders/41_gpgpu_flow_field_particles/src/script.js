@@ -81,13 +81,20 @@ renderer.setPixelRatio(sizes.pixelRatio)
 debugObject.clearColor = '#29191f'
 renderer.setClearColor(debugObject.clearColor)
 
+/**
+ * Load model
+ */
+const gltf = await gltfLoader.loadAsync('./model.glb')
+// console.log('GLTF:', gltf)
 
 /**
  * Base geometry
  */
 const baseGeometry = {}
-baseGeometry.instance = new THREE.SphereGeometry(3)
+// baseGeometry.instance = new THREE.SphereGeometry(3)
+baseGeometry.instance = gltf.scenes[0].children[0].geometry
 baseGeometry.count = baseGeometry.instance.attributes.position.count
+console.log(baseGeometry.instance.attributes.color)
 
 /**
  * GPU Compute
@@ -146,6 +153,7 @@ const particles = {}
 
 // Geometry
 const particlesUvArray = new Float32Array(baseGeometry.count * 2)
+const sizesArray = new Float32Array(baseGeometry.count)
 
 for (let y = 0; y < gpgpu.size; y++)
 {
@@ -154,12 +162,16 @@ for (let y = 0; y < gpgpu.size; y++)
         const i = y * gpgpu.size + x
         const i2 = i * 2
 
+        // Particles UV
         const uvX = (x + 0.5) / gpgpu.size
         const uvY = (y + 0.5) / gpgpu.size
         // console.log(uvX)
 
         particlesUvArray[i2 + 0] = uvX
         particlesUvArray[i2 + 1] = uvY
+
+        // Size
+        sizesArray[i] = Math.random()
     }
 }
 // console.log(particlesUvArray)
@@ -167,6 +179,8 @@ for (let y = 0; y < gpgpu.size; y++)
 particles.geometry = new THREE.BufferGeometry()
 particles.geometry.setDrawRange(0, baseGeometry.count)
 particles.geometry.setAttribute('aParticlesUv', new THREE.BufferAttribute(particlesUvArray, 2))
+particles.geometry.setAttribute('aColor', baseGeometry.instance.attributes.color)
+particles.geometry.setAttribute('aSize', new THREE.BufferAttribute(sizesArray, 1))
 
 
 
@@ -176,7 +190,7 @@ particles.material = new THREE.ShaderMaterial({
     fragmentShader: particlesFragmentShader,
     uniforms:
     {
-        uSize: new THREE.Uniform(0.4),
+        uSize: new THREE.Uniform(0.07),
         uResolution: new THREE.Uniform(new THREE.Vector2(sizes.width * sizes.pixelRatio, sizes.height * sizes.pixelRatio)),
         uParticlesTexture: new THREE.Uniform()
     }
